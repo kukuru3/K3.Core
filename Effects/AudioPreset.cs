@@ -39,4 +39,33 @@ namespace K3.Effects {
             source.outputAudioMixerGroup = mixerGroup;
         }
     }
+
 }
+
+#if UNITY_EDITOR
+namespace K3.Editor {
+    using K3.Effects;
+    using UnityEditor;
+
+    [CustomEditor(typeof(AudioPreset))]
+    class AudioPresetInspector : Editor {
+        AudioPreset Target => (AudioPreset)target;
+        public override void OnInspectorGUI() {
+            base.OnInspectorGUI();
+            var str = serializedObject.FindProperty("strengthFactor").floatValue;
+            var linear = serializedObject.FindProperty("linearRolloff").boolValue;
+            var D = Mathf.Pow((float)System.Math.E, str * 10f) * 0.1F - 0.1F;
+            if (linear) {
+                var minDist = D / 2;
+                var maxDist = D * 5;
+                EditorGUILayout.HelpBox($"Linear roloff, volume strongest at {minDist:F}m and falls off until inaudible at {maxDist:F}m", MessageType.Info);
+            }else {
+                var minDist = D;
+                var maxDist = D * 30;
+                EditorGUILayout.HelpBox($"Log roloff, volume starts decaying at {minDist:F}m and falls off quickly after that", MessageType.Info);
+            }
+
+        }
+    }
+}
+#endif

@@ -87,7 +87,7 @@ namespace K3.UI {
                 if (t != null) {
                     try {
                         d = Delegate.CreateDelegate(t, sourceComponent, method.Name);
-                    } catch (ArgumentException e) {
+                    } catch (ArgumentException) {
                         Debug.LogError($"Bind attempt failed trying to bind method {method} to a delegate of type {t} in {this.sourceComponent}");
                     }
 

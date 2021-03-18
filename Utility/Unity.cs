@@ -83,7 +83,7 @@ namespace K3 {
 
         //        }
 
-        static public T[] FindAllObjectsOfTypeIncludingInactive<T>() where T : UnityEngine.Object {
+        static public T[] FindAllObjectsOfTypeIncludingInactive<T>() {
             var loadedScenes = GetLoadedScenes();
             if (loadedScenes.Length == 0) throw new Exception("No scenes were loaded yet; this code will not execute!");
             var gameObjects = loadedScenes.SelectMany(scene => scene.GetRootGameObjects());
