@@ -48,6 +48,7 @@ namespace K3.Modular {
         void LaunchGame(IHasUnityEvents eventSource);
     }
 
+    [System.Obsolete("Replace the launcher / bridge system with a more modular services-on-demand")]
     public interface IHasUnityEvents {
         event System.Action OnFixedUpdate;
         event System.Action OnGUIDrawn;

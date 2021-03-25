@@ -1,18 +1,28 @@
 ﻿using UnityEngine;
 
 namespace K3 {
+
+    public interface IHasInit {
+        bool Initialized { get; }
+    }
+
     /// <summary> Intended to REPLACE UNITY MONOBEHAVIOUR!!!!</summary>
-    public abstract class Script : MonoBehaviour {
+    public abstract class Script : MonoBehaviour, IHasInit {
 
         static internal event System.Action<Script> OnInstantiated;
         static internal event System.Action<Script> OnDestroyed;
 
+        bool initialized = false;
+
         protected virtual void Awake() {
             OnInstantiated?.Invoke(this);
             Init();
+            initialized = true;
         }
 
-        static public bool isApplicationQuitting; 
+        static public bool isApplicationQuitting;
+
+        bool IHasInit.Initialized => initialized;
 
         private void OnDestroy() {
             OnDestroyed?.Invoke(this);
@@ -24,6 +34,5 @@ namespace K3 {
         protected virtual void Teardown(bool quit) { }
 
         protected internal virtual void Logic() { }
-
     }
 }

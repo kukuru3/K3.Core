@@ -6,6 +6,20 @@ namespace K3 {
 
     }
 
+    public interface IUnityMessageSource {
+        event System.Action OnFixedUpdate;
+        event System.Action OnGUIDrawn;
+        event System.Action OnLateUpdate;
+        event System.Action OnUpdate;
+        event System.Action OnLogic;
+        event System.Action OnQuitting;
+    }
+
+    public interface IScriptSource {
+        event System.Action<Script> OnScriptInstantiated;
+        event System.Action<Script> OnScriptDestroyed;
+    }
+
     public interface ISceneContainers {
         IContainer<T> GetContainer<T>();
         void RegisterContainer<T>(IContainer<T> container);
@@ -18,7 +32,6 @@ namespace K3 {
 
     public interface IContainer<T> : IContainer {
         IEnumerable<T> AllElements { get; }
-
         void Add(T item);
         void Remove(T item);
 
