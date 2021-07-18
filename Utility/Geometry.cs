@@ -32,6 +32,54 @@ namespace K3 {
             return Vector3.Dot(p - a, axis) / Vector3.Distance(a, b);
         }
 
+
+        static public (Vector3 pointOnA, Vector3 pointOnB) ClosestPointsBetweenTwoLineSegments(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
+            static Vector3 ConstrainToSegment(Vector3 position, Vector3 segA, Vector3 segB) {
+                var ba = segB - segA; var t = Vector3.Dot(position - segA, ba) / Vector3.Dot(ba, ba);
+                return Vector3.Lerp(segA, segB, t);
+            }
+
+            var dc = d-c; var lineDirSqrMag = Vector3.Dot(dc, dc);
+            var inPlaneA = a-((Vector3.Dot(a-c, dc)/lineDirSqrMag)*dc);
+            var inPlaneB = b-((Vector3.Dot(b-c, dc)/lineDirSqrMag)*dc);
+            var inPlaneBA = inPlaneB-inPlaneA;
+            var t = Vector3.Dot(c-inPlaneA, inPlaneBA)/ Vector3.Dot(inPlaneBA, inPlaneBA);
+            t = (inPlaneA != inPlaneB) ? t : 0f; // Zero's t if parallel
+            var segABtoLineCD = Vector3.Lerp(a, b, t);
+
+            var segCDtoSegAB = ConstrainToSegment(segABtoLineCD, c, d);
+            var segABtoSegCD = ConstrainToSegment(segCDtoSegAB, a, b);
+
+            return (segABtoSegCD, segCDtoSegAB);
+        }
+
+        //static public float DistanceOfTwoLineSegments(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
+        //    var u = b - a;
+        //    var v = d - c;
+        //    var r = c - a;
+        //    var ru = Vector3.Dot(r, u);
+        //    var rv = Vector3.Dot(r, v);
+        //    var uu = Vector3.Dot(u, u);
+        //    var uv = Vector3.Dot(u, v);
+        //    var vv = Vector3.Dot(v, v);
+
+        //    var det = uu * vv - uv * uv;
+        //    // if det close to 0, lines are parallel
+        //    if (Mathf.Abs(det) < 0.0001f) {
+        //        throw new System.NotImplementedException("Not yet implemented for parallel lines");
+        //    }
+
+        //    var s = (ru * vv - rv * uv) / det;
+        //    var t = (ru * uv - rv * uu) / det;
+        //    s = Mathf.Clamp01(s);
+        //    t = Mathf.Clamp01(t);
+        //    var S = (t * uv + ru) / uu;
+        //    var T = (s * uv - rv) / vv;
+        //    var closestOnA = a + S * u;
+        //    var closestOnB = b + T * v;
+        //    return Vector3.Distance(closestOnA, closestOnB);
+        //}
+
         public static Vector3? NormalizedInterceptVector(Vector3 interceptorPosition, Vector3 targetPosition, Vector3 targetVelocity, float interceptorVelocityMagnitude) {
             var O = interceptorPosition;
             var P = targetPosition;
