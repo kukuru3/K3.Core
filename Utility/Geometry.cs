@@ -64,33 +64,6 @@ namespace K3 {
             return (segABtoSegCD, segCDtoSegAB);
         }
 
-        //static public float DistanceOfTwoLineSegments(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
-        //    var u = b - a;
-        //    var v = d - c;
-        //    var r = c - a;
-        //    var ru = Vector3.Dot(r, u);
-        //    var rv = Vector3.Dot(r, v);
-        //    var uu = Vector3.Dot(u, u);
-        //    var uv = Vector3.Dot(u, v);
-        //    var vv = Vector3.Dot(v, v);
-
-        //    var det = uu * vv - uv * uv;
-        //    // if det close to 0, lines are parallel
-        //    if (Mathf.Abs(det) < 0.0001f) {
-        //        throw new System.NotImplementedException("Not yet implemented for parallel lines");
-        //    }
-
-        //    var s = (ru * vv - rv * uv) / det;
-        //    var t = (ru * uv - rv * uu) / det;
-        //    s = Mathf.Clamp01(s);
-        //    t = Mathf.Clamp01(t);
-        //    var S = (t * uv + ru) / uu;
-        //    var T = (s * uv - rv) / vv;
-        //    var closestOnA = a + S * u;
-        //    var closestOnB = b + T * v;
-        //    return Vector3.Distance(closestOnA, closestOnB);
-        //}
-
         public static Vector3? NormalizedInterceptVector(Vector3 interceptorPosition, Vector3 targetPosition, Vector3 targetVelocity, float interceptorVelocityMagnitude) {
             var O = interceptorPosition;
             var P = targetPosition;
@@ -145,9 +118,6 @@ namespace K3 {
             return null;
         }
 
-        public static (Vector3 pointOnA, Vector3 pointOnB) ClosestPointsBetweenTwoLineSegments(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
-            return (b, d); // hack
-        }
         public static Vector2 Flatten(this Vector3 vector) => new Vector2(vector.x, vector.z);
         public static Vector3 Deflatten(this Vector2 vector) => new Vector3(vector.x, 0, vector.y);
 
