@@ -12,6 +12,11 @@ namespace K3.Effects
             if (clip == null) return;
             var audioSource = atGameObject.GetComponent<AudioSource>();
             if (audioSource == null) audioSource = atGameObject.AddComponent<AudioSource>();
+
+            audioSource.bypassEffects = bypass;
+            audioSource.bypassListenerEffects = bypass;
+            
+
             audioSource.loop = bank.Looping;
             bank.Propagation.Apply(audioSource);
             audioSource.playOnAwake = false;

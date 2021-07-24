@@ -7,8 +7,12 @@ using int2 = UnityEngine.Vector2Int;
 
 namespace K3.Utility {
 
-    public interface IHasPosition {
-        UnityEngine.Vector3 Position { get; }
+    public interface IHas3dPosition {
+        Vector3 Position { get; }
+    }
+
+    public interface IHasMapPosition {
+        Vector2 MapPosition { get; }
     }
 
     /// <summary>Optimized for 2d-like games, where a transform's Y coordinate is ignored.</summary>
@@ -27,15 +31,19 @@ namespace K3.Utility {
         float _cellResolution = 10f;
 
         public SimpleSpatialHash() {
-            if (typeof(IHasPosition).IsAssignableFrom(typeof(T))) positionEvaluator = GetPositionFromInterface;
+            if (typeof(IHas3dPosition).IsAssignableFrom(typeof(T))) positionEvaluator = GetPositionFromInterface;
+            else if (typeof(IHasMapPosition).IsAssignableFrom(typeof(T))) positionEvaluator = GetPositionFromInterface2D;
             else if (typeof(Component).IsAssignableFrom(typeof(T))) positionEvaluator = GetPositionFromComponent;
             else throw new Exception($"Cannot use spatial hashing on {typeof(T)} since there is no way to extract position from it.");
         }
 
-        Vector3 GetPositionFromComponent(T obj) => (obj as Component).transform.position;
-        Vector3 GetPositionFromInterface(T hasPos) => (hasPos as IHasPosition).Position;
+        public IEnumerable<T> AllItems() => objToKeyLookup.Keys;
 
-        delegate Vector3 GetPositionDelegate(T sourceObject);
+        Vector2 GetPositionFromComponent(T obj) => (obj as Component).transform.position.Flatten();
+        Vector2 GetPositionFromInterface(T hasPos) => (hasPos as IHas3dPosition).Position.Flatten();
+        Vector2 GetPositionFromInterface2D(T hasPos) => (hasPos as IHasMapPosition).MapPosition;
+
+        delegate Vector2 GetPositionDelegate(T sourceObject);
 
         GetPositionDelegate positionEvaluator;
 
@@ -59,12 +67,9 @@ namespace K3.Utility {
 
         int2 GetKey(T @object) { 
             return GetKey(positionEvaluator(@object));
-            //if (@object is IHasPosition pos) return GetKey(pos.Position);
-            //else if (@object is Component c) return GetKey(c.transform.position);
-            //else throw new Exception($"Cannot use spatial hashing on {typeof(T)} since there is no way to extract position from it.");
         }
 
-        int2 GetKey(Vector3 position) => new int2(Mathf.FloorToInt(position.x / _cellResolution), Mathf.FloorToInt(position.z / _cellResolution));
+        int2 GetKey(Vector2 position) => new int2(Mathf.FloorToInt(position.x / _cellResolution), Mathf.FloorToInt(position.y / _cellResolution));
 
         public void Add(T @object) {
             var key = GetKey(@object);
@@ -93,61 +98,21 @@ namespace K3.Utility {
             objToKeyLookup.Remove(@object);
         }
 
-        public IEnumerable<T> GetObjectsInRadius(Vector3 worldCenter, float radius) {
+        public IEnumerable<T> GetObjectsInRadius(Vector2 worldCenter, float radius) {
             // this is a naive "in range" check. "Intersect circle with grid" would do better.
             // as is, we check up to 27% more grid squares than necessary
             var minX = Mathf.FloorToInt((worldCenter.x - radius) / _cellResolution);
             var maxX = Mathf.FloorToInt((worldCenter.x + radius) / _cellResolution);
-            var minY = Mathf.FloorToInt((worldCenter.z - radius) / _cellResolution);
-            var maxY = Mathf.FloorToInt((worldCenter.z + radius) / _cellResolution);
+            var minY = Mathf.FloorToInt((worldCenter.y - radius) / _cellResolution);
+            var maxY = Mathf.FloorToInt((worldCenter.y + radius) / _cellResolution);
             for (var x = minX; x <= maxX; x++)
             for (var y = minY; y <= maxY; y++) {
                 if (sparseGrid.TryGetValue(new int2(x,y), out var cell)) {
                     foreach (var item in cell.items) {
-                        if (Vector3.Distance(positionEvaluator(item), worldCenter) <= radius) yield return item;
+                        if (Vector2.SqrMagnitude(positionEvaluator(item) - worldCenter) <= radius * radius) yield return item;
                     }
                 }
             }
         }
     }
-
-    public class StaggeredPriorityList<T>  {
-
-        class Entry {
-            public T item;
-            public int lastEvaluatedPriority;
-        }
-
-        List<Entry> entries = new List<Entry>();
-
-        Dictionary<T, Entry> entryLookup = new Dictionary<T, Entry>();
-
-        private readonly Func<T, int> evaluatorFunction;
-        private readonly int maxItemsPerPass;
-
-        int currentCursorPosition;
-
-        public StaggeredPriorityList(Func<T, int> scoreEvaluator, int maxItemsPerPass) {
-            evaluatorFunction = scoreEvaluator;
-            this.maxItemsPerPass = maxItemsPerPass;
-        }
-
-
-
-        public T CurrentListLeader { get; private set; }
-        public int CurrentPriority { get; private set; }
-
-        public void DoPass() {
-            
-        }
-
-        public void Add(T item) {
-
-        }
-
-        public void Remove(T item) {
-
-        }
-    }
-
 }

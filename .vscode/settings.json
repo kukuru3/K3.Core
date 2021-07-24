@@ -1,0 +1,8 @@
+{
+    "search.exclude": {
+        "**/*.meta": true
+    },
+    "files.exclude": {
+        "**/*.meta": true
+    }
+}
