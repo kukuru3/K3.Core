@@ -86,6 +86,9 @@ namespace K3 {
             return null;
         }
 
+        public static (Vector3 pointOnA, Vector3 pointOnB) ClosestPointsBetweenTwoLineSegments(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
+            return (b, d); // hack
+        }
         public static Vector2 Flatten(this Vector3 vector) => new Vector2(vector.x, vector.z);
         public static Vector3 Deflatten(this Vector2 vector) => new Vector3(vector.x, 0, vector.y);
 
