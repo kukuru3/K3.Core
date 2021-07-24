@@ -32,6 +32,17 @@ namespace K3 {
             return Vector3.Dot(p - a, axis) / Vector3.Distance(a, b);
         }
 
+        public static Vector2 Rotated(this Vector2 v, float degrees) {
+            float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+            float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+
+            float tx = v.x;
+            float ty = v.y;
+            v.x = (cos * tx) - (sin * ty);
+            v.y = (sin * tx) + (cos * ty);
+            return v;
+        }
+
 
         static public (Vector3 pointOnA, Vector3 pointOnB) ClosestPointsBetweenTwoLineSegments(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
             static Vector3 ConstrainToSegment(Vector3 position, Vector3 segA, Vector3 segB) {

@@ -33,6 +33,7 @@ namespace K3.Collections {
             rootNode = new TreeNode(rootItem);
             nodeLookup.Add(rootItem, rootNode);
             ElementAdded?.Invoke(rootItem);
+            InvalidateCache();
         }
 
         public void Insert(T item, T parent) {
@@ -53,7 +54,15 @@ namespace K3.Collections {
 
         public T GetRoot() => rootNode.Item; 
 
-        public IEnumerable<T> GetChildren(T item) => FindNodeOf(item).children.Select(c => c.Item);
+        public IEnumerable<T> GetChildren(T item) {
+            var n = FindNodeOf(item);
+            if (n != null) return n.children.Select(c => c.Item);
+            else {
+                UnityEngine.Debug.Log($"Item {item} has no associated node");
+                return new T[0];
+            }
+
+        }
 
         /// <summary>Returns item, its parent, grandparent and so on all the way to the root.</summary>
         public IEnumerable<T> GetParentStack(T item) {
@@ -69,6 +78,7 @@ namespace K3.Collections {
             var node = FindNodeOf(item);
             var subtree = GetSubtree(node);
             foreach (var nn in subtree.Reverse()) Remove(nn);
+            InvalidateCache();
         }
 
         private TreeNode FindNodeOf(T item) {
@@ -85,12 +95,14 @@ namespace K3.Collections {
 
             nodeLookup.Add(node.Item, node);
             ElementAdded?.Invoke(node.Item);
+            InvalidateCache();
         }
 
         private void Remove(TreeNode node) {
             Unparent(node);
             nodeLookup.Remove(node.Item);
             ElementRemoved?.Invoke(node.Item);
+            InvalidateCache();
         }
 
         private void Unparent(TreeNode node) {
@@ -104,5 +116,16 @@ namespace K3.Collections {
             foreach (var child in fromNode.children) foreach (var subtreeItem in GetSubtree(child)) yield return subtreeItem;
         }
 
+        List<T> compiledList = null;
+
+        void InvalidateCache() => compiledList = null;
+
+        void RegenerateCompiledList() { compiledList = new List<T>(); foreach (var q in Iterate()) compiledList.Add(q.item); }
+
+        public IEnumerable<T> FlatListOfItems { get {
+            if (compiledList == null) 
+                RegenerateCompiledList();
+            return compiledList;
+        } }
     }
 }
