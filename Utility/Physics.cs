@@ -25,6 +25,19 @@ namespace K3 {
             throw new System.NotImplementedException($"Static overlap check of collider of type {c.GetType()} is not yet supported - go pester KUKURU3 about it");
         }
 
+        static public (Vector3 a, Vector3 b) GetCapsuleColliderWorldspaceSegment(this CapsuleCollider cc) {
+            var t = cc.transform;
+            var d = _capsuleDirections[cc.direction] * 0.5f;
+            var p0 = t.TransformPoint(cc.center + d);
+            var p1 = t.TransformPoint(cc.center - d);
+            return (p0, p1);
+        }
 
+        static public Vector3 AverageContactNormal(this Collision collision) {
+            var averageContactNormal = Vector3.zero;
+            int counter = 0;
+            foreach (var contact in collision.contacts) { averageContactNormal += contact.normal; counter++; }
+            return averageContactNormal / counter;
+        }
     }
 }

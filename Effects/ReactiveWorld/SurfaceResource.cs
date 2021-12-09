@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 
 namespace K3.ReactiveWorld {
-    // Contains some properties through which you can flag surfaces with properties, and then later use
+    // Here you can flag surfaces with properties, and then later use
     // those properties for logic or cosmetic effects.
-    // MaterialSurfaceDefinitioniv
 
     [CreateAssetMenu(fileName = "surface.asset", menuName = "K3 Gamepak/ReactiveWorld Material")]
     public class SurfaceResource : Resource {

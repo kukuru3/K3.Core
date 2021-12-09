@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+
+using UnityEngine;
 
 namespace K3.Effects {
     [CreateAssetMenu(fileName = "soundbank.asset", menuName = "K3 Gamepak/Sound bank")]
@@ -19,6 +21,9 @@ namespace K3.Effects {
 
         bool UseShuffle => clips.Length > 5;
         Randoms.ShuffledArrayView<AudioClip> shuffler;
+
+        public int ClipCount => clips.Length;
+        public AudioClip GetClip(int index) => clips[index];
 
         public AudioClip GetNextClip() {
             if (clips.Length == 0) return null;

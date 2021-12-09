@@ -68,24 +68,8 @@ namespace K3 {
 
         static public GameObject FindTagInChildren(this GameObject go, string tag) => go.GetComponentsInChildren<Transform>(true).Select(t => t.gameObject).FirstOrDefault(o => o.tag == tag);
 
-        //        static GameObject[] ListAllGameObjectsInScene() {
-        //            var gameObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-
-        //            bool isValidGameObject(GameObject obj) {
-        //                if (obj.hideFlags == HideFlags.NotEditable || obj.hideFlags == HideFlags.HideAndDontSave) return false;
-        //#if UNITY_EDITOR
-        //                if (!UnityEditor.EditorUtility.IsPersistent(obj)) return false;
-        //#endif
-        //                return true;
-        //            }
-
-        //            return gameObjects.Where(isValidGameObject).ToArray();
-
-        //        }
-
         static public T[] FindAllObjectsOfTypeIncludingInactive<T>() {
-            var loadedScenes = GetLoadedScenes();
-            if (loadedScenes.Length == 0) throw new Exception("No scenes were loaded yet; this code will not execute!");
+            var loadedScenes = GetScenes(loadedOnly: false);
             var gameObjects = loadedScenes.SelectMany(scene => scene.GetRootGameObjects());
 
             gameObjects = gameObjects.Union(GetDontDestroyOnLoadObjects());
@@ -107,11 +91,12 @@ namespace K3 {
             }
         }
 
-        static public Scene[] GetLoadedScenes() {
+        static public Scene[] GetScenes(bool loadedOnly = false) {
             var result = new List<Scene>();
             for (var i = 0; i < SceneManager.sceneCount; i++) {
                 var scene = SceneManager.GetSceneAt(i);
-                if (scene.isLoaded) result.Add(scene);
+                if (loadedOnly && !scene.isLoaded) continue;
+                result.Add(scene);
             }
             return result.ToArray();
         }
@@ -148,6 +133,12 @@ namespace K3 {
             }
 
             return lastKnownCommonParent;
+        }
+
+        public static (float magnitude, Vector2 normalized) Parametrized(this Vector2 vector) {
+            var d2 = vector.x * vector.x + vector.y * vector.y;
+            var d = Mathf.Sqrt(d2);
+            return (d, new Vector2(vector.x / d, vector.y / d));
         }
     }
 }

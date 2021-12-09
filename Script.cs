@@ -20,7 +20,9 @@ namespace K3 {
             initialized = true;
         }
 
-        static public bool isApplicationQuitting;
+        static internal bool isApplicationQuitting;
+
+        static public bool IsApplicationQuitting => isApplicationQuitting;
 
         bool IHasInit.Initialized => initialized;
 

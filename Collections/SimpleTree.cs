@@ -16,6 +16,10 @@ namespace K3.Collections {
             CreateRoot(root);
         }
 
+        public SimpleTree() {
+            nodeLookup = new Dictionary<T, TreeNode>();
+        }
+
         class TreeNode {
             public T Item { get; }
 
@@ -28,7 +32,7 @@ namespace K3.Collections {
             internal List<TreeNode> children;
         }
 
-        void CreateRoot(T rootItem) {
+        public void CreateRoot(T rootItem) {
             if (rootNode != null) throw new InvalidOperationException("Root node already assigned");
             rootNode = new TreeNode(rootItem);
             nodeLookup.Add(rootItem, rootNode);
@@ -50,6 +54,7 @@ namespace K3.Collections {
                 yield return (node.Item, node.parent?.Item);
         }
 
+        public int CountChildren(T item) => FindNodeOf(item)?.children.Count ?? -1;
         public T GetParent(T item) => FindNodeOf(item).parent?.Item;
 
         public T GetRoot() => rootNode.Item; 
@@ -79,6 +84,12 @@ namespace K3.Collections {
             var subtree = GetSubtree(node);
             foreach (var nn in subtree.Reverse()) Remove(nn);
             InvalidateCache();
+        }
+
+        public IEnumerable<T> GetFlatSubtree(T fromItem) {
+            var node = FindNodeOf(fromItem);
+            var subtree = GetSubtree(node);
+            foreach (var nn in subtree) yield return nn.Item;
         }
 
         private TreeNode FindNodeOf(T item) {

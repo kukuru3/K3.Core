@@ -14,6 +14,12 @@ namespace K3 {
             return arr;
         }
 
+        public static TValue[] MapToArrayAndPopulate<TValue, TEnum>(TValue defaultValue = default) where TValue : struct where TEnum : Enum{
+            var arr = MapToArray<TValue, TEnum>();
+            for (var i = 0; i < arr.Length; i++) arr[i] = defaultValue;
+            return arr;
+        }
+
         public static TValue[] MapToArray<TValue, TEnum>() {
             var mv = MaxValue<TEnum>();
             // magic number assumptions were made:

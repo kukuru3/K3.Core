@@ -23,6 +23,7 @@ namespace K3 {
     public interface ISceneContainers {
         IContainer<T> GetContainer<T>();
         void RegisterContainer<T>(IContainer<T> container);
+        void RemoveContainer<T>(IContainer<T> container);
     }
 
     public interface IContainer {

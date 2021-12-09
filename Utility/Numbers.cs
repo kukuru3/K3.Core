@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace K3 {
     static public class Numbers {
-        public static float Map(this float source, float sourceFrom, float sourceTo, float targetFrom, float targetTo, bool constrained = false) {
+        public static float Map(this float source, float sourceFrom, float sourceTo, float targetFrom, float targetTo, bool constrained = true) {
             var t = (source - sourceFrom) / (sourceTo - sourceFrom);
             if (constrained) t = Mathf.Clamp01(t);
             return targetFrom + t * (targetTo - targetFrom);

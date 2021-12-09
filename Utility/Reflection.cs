@@ -46,6 +46,7 @@ namespace K3 {
             if (n.Contains("UnityEditor")) return false;
             if (n.Contains("UnityEngine")) return false;
             if (n.Contains("UnityScript")) return false;
+            if (n.Contains("Unity")) return false;
             return true;
         }
 

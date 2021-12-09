@@ -43,6 +43,19 @@ namespace K3 {
             return v;
         }
 
+        static public float IntersectSegmentAndPlane(Vector3 A, Vector3 B, Plane plane) {
+            var ray = new Ray(A, B - A);
+
+            if (plane.Raycast(ray, out float d)) return ProjectPointOnSegment(ray.GetPoint(d), A, B);
+
+            ray = new Ray(A, A - B);
+            if (plane.Raycast(ray, out float d2)) return ProjectPointOnSegment(ray.GetPoint(d2), A, B);
+            return 0;
+        }
+        static public float IntersectSegmentAndPlane(Vector3 A, Vector3 B, Vector3 planeNormal, Vector3 planePoint) {
+            var plane = new Plane(planeNormal, planePoint);
+            return IntersectSegmentAndPlane(A, B, plane);
+        }
 
         static public (Vector3 pointOnA, Vector3 pointOnB) ClosestPointsBetweenTwoLineSegments(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
             static Vector3 ConstrainToSegment(Vector3 position, Vector3 segA, Vector3 segB) {
@@ -147,6 +160,12 @@ namespace K3 {
 
         public static Vector2 Flatten(this Vector3 vector) => new Vector2(vector.x, vector.z);
         public static Vector3 Deflatten(this Vector2 vector) => new Vector3(vector.x, 0, vector.y);
+        public static Vector3 Planarized(this Vector3 vector) => new Vector3(vector.x, 0, vector.z);
+        public static (Vector3 unitVector, float magnitude) Parametrized(this Vector3 vector) {
+            var m = vector.magnitude;
+            if (m < float.Epsilon) return (default, default);
+            return (vector / m, m);
+        }
 
 
     }

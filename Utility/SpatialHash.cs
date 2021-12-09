@@ -95,7 +95,7 @@ namespace K3.Utility {
         public void Remove(T @object) {
             var key = objToKeyLookup[@object];
             GetCell(key).items.Remove(@object);
-            objToKeyLookup.Remove(@object);
+            objToKeyLookup.Remove(@object); 
         }
 
         public IEnumerable<T> GetObjectsInRadius(Vector2 worldCenter, float radius) {

@@ -4,6 +4,26 @@ using UnityEngine;
 
 namespace K3 {
 
+    static public partial class Dice {
+        /// <summary>Rolls a dice with results 1-100</summary>
+        public static int D100 => 1+Random.Range(0, 100);
+        public static int Successes(int dice, int threshold, int dieSides = 6) {
+            var counter = 0;
+            for (var i = 0; i < dice; i++)
+                if (Random.Range(1, dieSides+1) >= threshold) counter++;
+            return counter;
+        }
+
+        public static int Roll(int dice, int dieSides = 6) {
+            var sum = 0;
+            for (var i = 0; i < dice; i++) {
+                sum += Random.Range(0, dieSides) + 1;
+            }
+            return sum;
+        }
+
+    }
+
     static public partial class Randoms {
 
         public static void ShuffleInPlace<T>(this T[] array) {
@@ -28,6 +48,9 @@ namespace K3 {
 
         /// <summary> Since Box-Muller generates 2 independent uniform variables during execution, we can save 1 for the next call.</summary>
         static private float? boxMullerSpare;
+
+
+
         static private float BoxMuller() {
 
             if (boxMullerSpare != null) {
