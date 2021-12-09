@@ -22,6 +22,9 @@ namespace K3.Effects
             audioSource.loop = bank.Looping;
             bank.Propagation.Apply(audioSource);
             audioSource.playOnAwake = false;
+            
+            audioSource.bypassEffects = bypass;
+            audioSource.bypassListenerEffects = bypass;
             // audioSource.clip = clip;
             audioSource.volume = bank.Volume * volumeMul;
             audioSource.pitch = bank.Pitch;
