@@ -51,24 +51,28 @@ namespace K3 {
 
     #if UNITY_EDITOR
     static public partial class Paths {
-        static public class Editor { 
-        /// <summary>"Project root"is the folder that CONTAINS THE ASSETS folder</summary>
-        static public string GetProjectRoot() => new DirectoryInfo(Application.dataPath).Parent.FullName;
+        static public class Editor {
+            static Editor() {
+                _projectRoot = new DirectoryInfo(Application.dataPath).Parent.FullName;
+            }
+            static string _projectRoot;
+            /// <summary>"Project root"is the folder that CONTAINS THE ASSETS folder</summary>
+            static public string GetProjectRoot() => _projectRoot;
 
-        static public string GetProjectFolder(params string[] relativeFolders) {
-            var l = new List<string>();
-            l.Add(GetProjectRoot());
-            l.AddRange(relativeFolders);
-            return Path.Combine(l.ToArray());
-        }
+            static public string GetProjectPath(params string[] relativePath) {
+                var l = new List<string>();
+                l.Add(GetProjectRoot());
+                l.AddRange(relativePath);
+                return Path.Combine(l.ToArray());
+            }
 
-        //static public string EditorGetAssetsFolder
+            //static public string EditorGetAssetsFolder
 
-        [UnityEditor.MenuItem("K3 Tools/Dump folders")]
-        static void DumpFolders() {
-            Debug.Log($"editor project root : {GetProjectFolder("Data")}");
-            Debug.Log($"editor logfile: {GetLogFilePath()}");
-        }
+            [UnityEditor.MenuItem("K3 Tools/Dump folders")]
+            static void DumpFolders() {
+                Debug.Log($"editor project root : {GetProjectPath("Data")}");
+                Debug.Log($"editor logfile: {GetLogFilePath()}");
+            }
         }
     }
     #endif
