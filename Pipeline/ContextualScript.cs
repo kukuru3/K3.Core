@@ -1,13 +1,13 @@
-﻿namespace K3.Pipeline {
-    public interface IContextualScript {
-        void InjectContext(BaseContext context);
+﻿namespace K3.Modules {
+    public interface IModuleBehaviour {
+        void InjectContext(BaseModule context);
     }
 
-    public abstract class ContextualScript<TSegment> : UnityEngine.MonoBehaviour, IContextualScript  where TSegment : BaseContext {
-        protected TSegment Context { get; private set; }
+    public abstract class ModuleBehaviour<TModule> : UnityEngine.MonoBehaviour, IModuleBehaviour  where TModule : BaseModule {
+        protected TModule Module { get; private set; }
 
-        void IContextualScript.InjectContext(BaseContext context) {
-            Context = (TSegment)context;
+        void IModuleBehaviour.InjectContext(BaseModule module) {
+            Module = (TModule)module;
             Launch();
         }
 

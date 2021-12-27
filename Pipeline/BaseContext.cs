@@ -1,22 +1,27 @@
-﻿using K3.Modular;
+﻿using K3._ModularOld;
 
 using System.Collections.Generic;
 
-namespace K3.Pipeline {
-    public abstract class BaseContext : IExecutesFrame, IExecutesLateUpdate, IExecutesTick {
+namespace K3.Modules {
+    public abstract class BaseModule : IExecutesFrame, IExecutesLateUpdate, IExecutesTick {
         protected internal virtual void Cleanup() { }
 
-        List<BaseModule> modules = new List<BaseModule>();
-        protected IEnumerable<BaseModule> AllModules => modules;
+        List<BaseComponent> modules = new List<BaseComponent>();
+        protected IEnumerable<BaseComponent> AllModules => modules;
 
         protected IGlobalContext GlobalContext { get; private set; } 
 
-        public void AddModule(BaseModule m) {
+        public void AddModule(BaseComponent m) {
             modules.Add(m);
-            m.InjectContext(this);
+            m.InjectModule(this);
         }
 
-        internal void InjectContext(GlobalContext context) {
+        public T GetModule<T>() where T : BaseComponent {
+            foreach (var m in modules) if (m is T tm) return tm;
+            return default;
+        }
+
+        internal void InjectGlobalContext(GlobalContext context) {
             this.GlobalContext = context;
             Launch();
         }

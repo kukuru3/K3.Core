@@ -18,18 +18,18 @@ namespace K3.ReactiveWorld {
     /// The simplest game event relay - all observers are notified about all events sent by all emitters.
     /// Naturally you might want to have some other algorithms and grouping / bucketing.
     /// </summary>
-    public class GameEvents : Modular.IExecutesTeardown {
+    public class GameEvents : _ModularOld.IExecutesTeardown {
         List<IGameEventEmitter> emitters = new List<IGameEventEmitter>();
         List<IGameEventObserver> observers = new List<IGameEventObserver>();
 
         public GameEvents() {
-            Modular.K3ContextUtilities.Context.UnityEventSource.OnScriptCreated += HandleScriptCreated; 
-            Modular.K3ContextUtilities.Context.UnityEventSource.OnScriptDestroyed += HandleScriptDestroyed;
+            _ModularOld.K3ContextUtilities.Context.UnityEventSource.OnScriptCreated += HandleScriptCreated; 
+            _ModularOld.K3ContextUtilities.Context.UnityEventSource.OnScriptDestroyed += HandleScriptDestroyed;
         }
 
-        void Modular.IExecutesTeardown.Teardown() {
-            Modular.K3ContextUtilities.Context.UnityEventSource.OnScriptCreated -= HandleScriptCreated;
-            Modular.K3ContextUtilities.Context.UnityEventSource.OnScriptDestroyed -= HandleScriptDestroyed;
+        void _ModularOld.IExecutesTeardown.Teardown() {
+            _ModularOld.K3ContextUtilities.Context.UnityEventSource.OnScriptCreated -= HandleScriptCreated;
+            _ModularOld.K3ContextUtilities.Context.UnityEventSource.OnScriptDestroyed -= HandleScriptDestroyed;
         }
 
         void RegisterObserver(IGameEventObserver obs) {

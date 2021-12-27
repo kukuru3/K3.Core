@@ -1,22 +1,23 @@
-﻿namespace K3.Pipeline {
-    public abstract class BaseModule {
-        protected internal abstract void InjectContext(BaseContext context);
+﻿namespace K3.Modules {
+    public abstract class BaseComponent {
+        protected internal abstract void InjectModule(BaseModule module);
     }
     
-    public abstract class Module<TSegment> : BaseModule where TSegment : BaseContext {
-        protected TSegment Context { get; private set; }
+    public abstract class Component<TModule> : BaseComponent where TModule : BaseModule
+        {
+        protected TModule Module { get; private set; }
 
-        protected internal override void InjectContext(BaseContext context) {
-            if (context is TSegment typedContext) Context = typedContext;
-            else throw new System.InvalidCastException($"{GetType().Name} expects a context of type {typeof(TSegment).Name}; {context.GetType().Name} was supplied");
+        protected internal override void InjectModule(BaseModule module) {
+            if (module is TModule typedModule) Module = typedModule;
+            else throw new System.InvalidCastException($"{GetType().Name} expects a context of type {typeof(TModule).Name}; {module.GetType().Name} was supplied");
             Launch();
         }
 
         protected virtual void Launch() { }
     }
 
-    public interface IService<TContext> where TContext : BaseContext {
-        TContext Context { get; set; }
+    public interface IService<TModule> where TModule : BaseModule {
+        TModule Module { get; set; }
     }
 
 }

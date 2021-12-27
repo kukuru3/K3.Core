@@ -1,16 +1,16 @@
-﻿using K3.Modular;
+﻿using K3.Modules;
 using K3.Pipeline;
 
 namespace Embers.Program {
     public abstract class CommonAppInitializer : IPipelineInjector {
 
-        protected IGlobalContext Context { get; private set; }
+        protected IGlobalContext GlobalContext { get; private set; }
         protected IPipeline Pipeline { get; private set; }
         public void Inject(IPipeline pipeline) {
 
-            this.Pipeline = pipeline;
-            pipeline.RegisterMethod(IPipeline.Triggers.AppStart, LaunchGame);
-            pipeline.RegisterMethod(IPipeline.Triggers.Teardown, ClearContext);
+            Pipeline = pipeline;
+            Pipeline.RegisterMethod(IPipeline.Triggers.AppStart, LaunchGame);
+            Pipeline.RegisterMethod(IPipeline.Triggers.Teardown, ClearContext);
         }
 
         // you can (and should) register hooks of your own.
@@ -25,7 +25,7 @@ namespace Embers.Program {
         void LaunchGame() {
             var context = new GlobalContext();
             GlobalContextHolder.GlobalContext = context;
-            Context = context;
+            GlobalContext = context;
             RegisterLoopHoks(context);
             InitializeApplication(GlobalContextHolder.GlobalContext);
         }

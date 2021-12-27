@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace K3.Modular {
+namespace K3._ModularOld {
     public class ModuleContainer : IAppModuleContainer {
         internal SimpleTree<IAppModule> ModuleTree { get; private set; }
 

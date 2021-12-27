@@ -25,6 +25,11 @@ namespace K3.Pipeline {
             Insert<UnityEngine.PlayerLoop.FixedUpdate.ClearLines, ModulesFixedUpdate>(
                 () => CustomPipeline.Execute(IPipeline.Triggers.FixedUpdate)
             );
+
+            Insert<UnityEngine.PlayerLoop.PostLateUpdate.ProfilerEndFrame, PostCameraRender>(
+                () => CustomPipeline.Execute(IPipeline.Triggers.PostRender),
+                true
+            );
         }
 
         private static void Insert<TMatch, TInserted>(PlayerLoopSystem.UpdateFunction action, bool insertAfter = false) {
@@ -44,6 +49,10 @@ namespace K3.Pipeline {
             PlayerLoop.SetPlayerLoop(loop);
         }
 
+        internal static void ClearEvents() {
+            PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
+        }
+
         static void Insert(ref PlayerLoopSystem[] arr, int at, Type identifier, PlayerLoopSystem.UpdateFunction action) {
             var k = new PlayerLoopSystem { type = identifier, updateDelegate = action };
             var l = arr.ToList();
@@ -54,6 +63,7 @@ namespace K3.Pipeline {
         struct ModulesUpdate { }
         struct ModulesLateUpdate { }
         struct ModulesFixedUpdate { }
+        struct PostCameraRender { }
 
     }
 }

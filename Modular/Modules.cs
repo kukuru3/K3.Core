@@ -1,4 +1,4 @@
-﻿namespace K3.Modular {
+﻿namespace K3._ModularOld {
     
     internal static class K3ContextUtilities {
         // This is the only static accessor for the context in K3

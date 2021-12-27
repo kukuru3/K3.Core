@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace K3.Modular {
+namespace K3._ModularOld {
     /// <summary>
     /// Will send Unity callbacks to all services.
     /// Also serves to inject extra callbacks into all actively running Script-s, 

@@ -14,6 +14,7 @@ namespace K3.Pipeline {
             Update,
             FixedUpdate,
             LateUpdate,
+            PostRender,
             Teardown,
         }
 
@@ -49,6 +50,7 @@ namespace K3.Pipeline {
 
             pipelineObject = new PipelineInstance();
 
+            LoopManipulator.ClearEvents();
             LoopManipulator.AddLoopEvents();
             foreach (var injector in injectors) injector.Inject(pipelineObject);
         }

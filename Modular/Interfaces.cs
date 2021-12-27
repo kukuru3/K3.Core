@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace K3.Modular {
+namespace K3._ModularOld {
     public interface IExecutesInitialization {
         void Initialize();
     }

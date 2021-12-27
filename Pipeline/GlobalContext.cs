@@ -71,7 +71,8 @@
 // entry scene of course still exists, and still has the regular bootstrapper object and nothing else.
 
 
-using K3.Modular;
+using K3._ModularOld;
+using K3.Modules;
 
 using System.Collections.Generic;
 
@@ -85,42 +86,43 @@ namespace K3.Pipeline {
         }
 
         public void Frame() {
-            foreach (var ctx in globalContext.Contexts) if (ctx is IExecutesFrame framer) framer.Frame();
+            foreach (var ctx in globalContext.Modules) if (ctx is IExecutesFrame framer) framer.Frame();
         }
 
         public void LateUpdate() {
-            foreach (var ctx in globalContext.Contexts) if (ctx is IExecutesLateUpdate framer) framer.LateUpdate();
+            foreach (var ctx in globalContext.Modules) if (ctx is IExecutesLateUpdate framer) framer.LateUpdate();
         }
 
         public void Tick() {
-            foreach (var ctx in globalContext.Contexts) if (ctx is IExecutesTick ticker) ticker.Tick();
+            foreach (var ctx in globalContext.Modules) if (ctx is IExecutesTick ticker) ticker.Tick();
         }
 
     }
 
+}
+
+
+namespace K3.Modules {
+
     public interface IGlobalContext {
-        IEnumerable<BaseContext> Contexts { get; }
+        IEnumerable<BaseModule> Modules { get; }
 
-        void InstallContext(BaseContext context);
-    }
-
-    internal interface IContextProvider {
-
+        void InstallModule(BaseModule module);
     }
 
     internal class GlobalContext : IGlobalContext {
-        List<BaseContext> segments = new List<BaseContext>();
+        List<BaseModule> modules = new List<BaseModule>();
 
-        public IEnumerable<BaseContext> Contexts => segments;
+        public IEnumerable<BaseModule> Modules => modules;
 
         internal void Clear() {
-            foreach (var segment in segments) segment.Cleanup();
-            segments.Clear();
+            foreach (var segment in modules) segment.Cleanup();
+            modules.Clear();
         }
 
-        public void InstallContext(BaseContext ctx) {
-            this.segments.Add(ctx);
-            ctx.InjectContext(this);
+        public void InstallModule(BaseModule module) {
+            this.modules.Add(module);
+            module.InjectGlobalContext(this);
         }
     }
 }

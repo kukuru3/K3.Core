@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace K3.Modular {
+namespace K3._ModularOld {
     //public abstract class BaseGameLauncher : MonoBehaviour, IHasUnityEvents {
     //    public event Action OnFixedUpdate;
     //    public event Action OnGUIDrawn;
