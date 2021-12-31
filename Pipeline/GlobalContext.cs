@@ -116,13 +116,22 @@ namespace K3.Modules {
         public IEnumerable<BaseModule> Modules => modules;
 
         internal void Clear() {
-            foreach (var segment in modules) segment.Cleanup();
+            foreach (var module in modules) module.DestroyModule();
             modules.Clear();
+        }
+
+        public GlobalContext() {
+
         }
 
         public void InstallModule(BaseModule module) {
             this.modules.Add(module);
             module.InjectGlobalContext(this);
+        }
+
+        public void RemoveModule(BaseModule module) {
+            this.modules.Remove(module);
+            module.DestroyModule();
         }
     }
 }
