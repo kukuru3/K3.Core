@@ -1,5 +1,5 @@
 ﻿namespace K3.Modules {
-    static class GlobalContextHolder {
-        static internal GlobalContext GlobalContext { get; set; }
-    }
+    //static class GlobalContextHolder {
+    //    static internal ModuleContainer ModuleHolder { get; set; }
+    //}
 }

@@ -4,7 +4,7 @@ using K3.Pipeline;
 namespace Embers.Program {
     public abstract class CommonAppInitializer : IPipelineInjector {
 
-        protected IGlobalContext GlobalContext { get; private set; }
+        protected IModuleContainer Container { get; private set; }
         protected IPipeline Pipeline { get; private set; }
         public void Inject(IPipeline pipeline) {
 
@@ -14,8 +14,8 @@ namespace Embers.Program {
         }
 
         // you can (and should) register hooks of your own.
-        private void RegisterLoopHoks(GlobalContext context) {
-            var callbackHooks = new CallbackHooks(context);
+        private void RegisterLoopHoks(ModuleContainer container) {
+            var callbackHooks = new ContainerCallbackHoooks(container);
 
             Pipeline.RegisterMethod(IPipeline.Triggers.Update, callbackHooks.Frame);
             Pipeline.RegisterMethod(IPipeline.Triggers.LateUpdate, callbackHooks.LateUpdate);
@@ -23,17 +23,16 @@ namespace Embers.Program {
         }
 
         void LaunchGame() {
-            var context = new GlobalContext();
-            GlobalContextHolder.GlobalContext = context;
-            GlobalContext = context;
-            RegisterLoopHoks(context);
-            InitializeApplication(GlobalContextHolder.GlobalContext);
+            var container = new ModuleContainer();
+            Container = container;
+            RegisterLoopHoks(container);
+            InitializeApplication(container);
         }
-        protected abstract void InitializeApplication(IGlobalContext context);
+        protected abstract void InitializeApplication(IModuleContainer context);
 
         protected virtual void ClearContext() {
-            GlobalContextHolder.GlobalContext.Clear();
-            GlobalContextHolder.GlobalContext = null;
+            Container.Clear();
+            Container = null;
         }
     }
 

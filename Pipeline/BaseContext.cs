@@ -1,5 +1,6 @@
 ﻿using K3._ModularOld;
 
+using System;
 using System.Collections.Generic;
 
 namespace K3.Modules {
@@ -9,28 +10,38 @@ namespace K3.Modules {
     public abstract class BaseModule : IAppModule, IExecutesFrame, IExecutesLateUpdate, IExecutesTick {
 
         List<BaseComponent> components = new List<BaseComponent>();
-        protected IEnumerable<BaseComponent> AllModules => components;
-
-        protected IGlobalContext GlobalContext { get; private set; } 
+        Locators.ILocator componentLocator = new Locators.SimpleLocator();
+        protected IEnumerable<BaseComponent> AllComponents => componentLocator.LocateAll<BaseComponent>();
+        protected IModuleContainer Container { get; private set; } 
 
         public void AddComponent(BaseComponent m) {
             components.Add(m);
+            componentLocator.Register(m);
             m.InjectModule(this);
         }
 
-        public T GetModuleComponent<T>() {
-            foreach (var m in components) if (m is T tm) return tm;
-            return default;
+        public IEnumerable<T> ListComponents<T>() {
+            return componentLocator.LocateAll<T>();
+            // foreach (var m in components) if (m is T tm) yield return tm;
         }
 
-        internal void InjectGlobalContext(GlobalContext context) {
-            this.GlobalContext = context;
+        public T GetModuleComponent<T>() {
+            return componentLocator.Locate<T>();
+            // foreach (var m in components) if (m is T tm) return tm;
+            // return default;
+        }
+
+        internal void InjectContainer(ModuleContainer container) {
+            this.Container = container;
+            ValidateState();
             Launch();
         }
 
+        protected virtual void ValidateState() { }
+
         internal void DestroyModule() {
             Teardown();
-            this.GlobalContext = null;
+            this.Container = null;
         }
 
         protected virtual void Launch() { }
@@ -43,5 +54,4 @@ namespace K3.Modules {
 
         protected virtual void DoTick() { }
     }
-
 }

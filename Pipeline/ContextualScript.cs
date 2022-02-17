@@ -1,6 +1,6 @@
 ﻿namespace K3.Modules {
     public interface IModuleBehaviour {
-        void InjectContext(IAppModule module);
+        void InjectModule(IAppModule module);
     }
 
     public abstract class ModuleBehaviour<TModule> : UnityEngine.MonoBehaviour, IModuleBehaviour where TModule : IAppModule {
@@ -8,7 +8,7 @@
 
         protected T GetModuleComponent<T>() => Module.GetModuleComponent<T>();
 
-        void IModuleBehaviour.InjectContext(IAppModule module) {
+        void IModuleBehaviour.InjectModule(IAppModule module) {
             Module = (TModule)module;
             Launch();
         }
