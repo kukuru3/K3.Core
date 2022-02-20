@@ -84,16 +84,29 @@ namespace K3.Pipeline {
             this.moduleHolder = context;
         }
 
+        void Propagate<T>(System.Action<T> propagatedAction) {
+            foreach (var module in moduleHolder.Modules) {
+                if (module is T tmodule) {
+                    propagatedAction(tmodule);
+                }
+                foreach (var cmp in module.ListComponents<T>())
+                    propagatedAction(cmp);
+            }
+        }
+
         public void Frame() {
-            foreach (var ctx in moduleHolder.Modules) if (ctx is IExecutesFrame framer) framer.Frame();
+            Propagate<IExecutesFrame>(f => f.Frame());
+            //foreach (var module in moduleHolder.Modules) if (module is IExecutesFrame framer) framer.Frame();
         }
 
         public void LateUpdate() {
-            foreach (var ctx in moduleHolder.Modules) if (ctx is IExecutesLateUpdate framer) framer.LateUpdate();
+            Propagate<IExecutesLateUpdate>(ielu => ielu.LateUpdate());
+            // foreach (var ctx in moduleHolder.Modules) if (ctx is IExecutesLateUpdate framer) framer.LateUpdate();
         }
 
         public void Tick() {
-            foreach (var ctx in moduleHolder.Modules) if (ctx is IExecutesTick ticker) ticker.Tick();
+            Propagate<IExecutesTick>(ticker => ticker.Tick());
+            // foreach (var ctx in moduleHolder.Modules) if (ctx is IExecutesTick ticker) ticker.Tick();
         }
 
     }

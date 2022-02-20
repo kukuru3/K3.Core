@@ -1,6 +1,7 @@
 ﻿namespace K3.Modules {
     public abstract class BaseComponent {
         protected internal abstract void InjectModule(BaseModule module);
+        protected internal abstract void Release();
     }
     
     public abstract class Component<TModule> : BaseComponent where TModule : BaseModule
@@ -13,6 +14,10 @@
             if (module is TModule typedModule) Module = typedModule;
             else throw new System.InvalidCastException($"{GetType().Name} expects a module of type {typeof(TModule).Name}; {module.GetType().Name} was supplied");
             Launch();
+        }
+
+        protected internal override void Release() {
+            Teardown();
         }
 
         protected virtual void Launch() { }

@@ -25,6 +25,9 @@ namespace Embers.Program {
         void LaunchGame() {
             var container = new ModuleContainer();
             Container = container;
+
+            ContextUtility.SetContainerInstance(container);
+
             RegisterLoopHoks(container);
             InitializeApplication(container);
         }

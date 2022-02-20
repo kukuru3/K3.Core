@@ -7,7 +7,7 @@ namespace K3.Modules {
     public interface IAppModule {
         T GetModuleComponent<T>();
     }
-    public abstract class BaseModule : IAppModule, IExecutesFrame, IExecutesLateUpdate, IExecutesTick {
+    public abstract class BaseModule : IAppModule {
 
         List<BaseComponent> components = new List<BaseComponent>();
         Locators.ILocator componentLocator = new Locators.SimpleLocator();
@@ -41,16 +41,22 @@ namespace K3.Modules {
 
         internal void DestroyModule() {
             Teardown();
+            ReleaseComponents();
             this.Container = null;
+        }
+
+        private void ReleaseComponents() {
+            foreach (var component in this.components) component.Release();
+            components.Clear();
+            // at the moment, Application.quitting calls Teardown for modules
+            // then, the temporary scene game objects are destroyed and their Teardown(), if any, gets called
+            // so we might want to leave componentLocator undestroyed at this stage, I suppose.
+            // componentLocator = null; 
         }
 
         protected virtual void Launch() { }
 
         protected virtual void Teardown() { }
-
-        void IExecutesTick.Tick() { foreach (var module in components) if (module is IExecutesTick t) t.Tick(); }
-        void IExecutesLateUpdate.LateUpdate() { foreach (var module in components) if (module is IExecutesLateUpdate lu) lu.LateUpdate(); }
-        void IExecutesFrame.Frame() { foreach (var module in components) if (module is IExecutesFrame f) f.Frame(); }
 
         protected virtual void DoTick() { }
     }
