@@ -23,6 +23,10 @@ namespace K3.Modules {
             return default;
         }
 
+        public IEnumerable<T> ListComponents<T>() {
+            foreach (var m in components) if (m is T tm) yield return tm;
+        }
+
         internal void InjectGlobalContext(GlobalContext context) {
             this.GlobalContext = context;
             Launch();
