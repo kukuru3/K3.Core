@@ -72,29 +72,41 @@
 
 
 using K3._ModularOld;
-using K3.Modules;
 
 using System.Collections.Generic;
 
 namespace K3.Pipeline {
 
-    class CallbackHooks {
+    class ContainerCallbackHoooks {
 
-        readonly GlobalContext globalContext;
-        public CallbackHooks(GlobalContext context) {
-            this.globalContext = context;
+        readonly Modules.ModuleContainer moduleHolder;
+        public ContainerCallbackHoooks(Modules.ModuleContainer context) {
+            this.moduleHolder = context;
+        }
+
+        void Propagate<T>(System.Action<T> propagatedAction) {
+            foreach (var module in moduleHolder.Modules) {
+                if (module is T tmodule) {
+                    propagatedAction(tmodule);
+                }
+                foreach (var cmp in module.ListComponents<T>())
+                    propagatedAction(cmp);
+            }
         }
 
         public void Frame() {
-            foreach (var ctx in globalContext.Modules) if (ctx is IExecutesFrame framer) framer.Frame();
+            Propagate<IExecutesFrame>(f => f.Frame());
+            //foreach (var module in moduleHolder.Modules) if (module is IExecutesFrame framer) framer.Frame();
         }
 
         public void LateUpdate() {
-            foreach (var ctx in globalContext.Modules) if (ctx is IExecutesLateUpdate framer) framer.LateUpdate();
+            Propagate<IExecutesLateUpdate>(ielu => ielu.LateUpdate());
+            // foreach (var ctx in moduleHolder.Modules) if (ctx is IExecutesLateUpdate framer) framer.LateUpdate();
         }
 
         public void Tick() {
-            foreach (var ctx in globalContext.Modules) if (ctx is IExecutesTick ticker) ticker.Tick();
+            Propagate<IExecutesTick>(ticker => ticker.Tick());
+            // foreach (var ctx in moduleHolder.Modules) if (ctx is IExecutesTick ticker) ticker.Tick();
         }
 
     }
@@ -104,34 +116,45 @@ namespace K3.Pipeline {
 
 namespace K3.Modules {
 
-    public interface IGlobalContext {
+    public interface IModuleContainer {
         IEnumerable<BaseModule> Modules { get; }
 
+        T GetModule<T>();
+
         void InstallModule(BaseModule module);
+
+        void Clear();
+        void RemoveModule(BaseModule module);
     }
 
-    internal class GlobalContext : IGlobalContext {
+    internal class ModuleContainer : IModuleContainer {
+        Locators.SimpleLocator moduleLocator = new Locators.SimpleLocator(); 
         List<BaseModule> modules = new List<BaseModule>();
 
         public IEnumerable<BaseModule> Modules => modules;
 
-        internal void Clear() {
-            foreach (var module in modules) module.DestroyModule();
+        public void Clear() {
+            foreach (var module in modules.ToArray()) module.DestroyModule();
             modules.Clear();
         }
 
-        public GlobalContext() {
+        public ModuleContainer() {
 
         }
 
         public void InstallModule(BaseModule module) {
             this.modules.Add(module);
-            module.InjectGlobalContext(this);
+            moduleLocator.Register(module);
+            module.InjectContainer(this);
         }
 
         public void RemoveModule(BaseModule module) {
-            this.modules.Remove(module);
-            module.DestroyModule();
+            if (modules.Remove(module)) { 
+                moduleLocator.Unregister(module);
+                module.DestroyModule();
+            }
         }
+
+        public T GetModule<T>() => moduleLocator.Locate<T>() ?? default;
     }
 }

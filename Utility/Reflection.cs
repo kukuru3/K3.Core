@@ -120,5 +120,32 @@ namespace K3 {
             }
             return null;
         }
+
+        static Collections.Multidict<Type, Type> _derivationCache = new Collections.Multidict<Type, Type>();
+
+        static public IEnumerable<Type> FindAllBaseTypes(Type derivedType) {
+            if (!_derivationCache.Has(derivedType))
+                foreach (var t in DoFindAllBaseTypes(derivedType)) _derivationCache.Add(derivedType, t);
+            return _derivationCache.All(derivedType);
+        }
+
+        static private IEnumerable<Type> DoFindAllBaseTypes(Type derivedType) {
+            var queue = new Queue<Type>();
+            var set = new HashSet<Type>();
+            queue.Enqueue(derivedType);
+            set.Add(derivedType);
+
+            while (queue.Count > 0) {
+                var t = queue.Dequeue();
+                yield return t;
+
+                if (t.BaseType != null)
+                    if (set.Add(t.BaseType)) queue.Enqueue(t.BaseType);
+
+                foreach (var interfaceType in t.GetInterfaces()) {
+                    if (set.Add(interfaceType)) queue.Enqueue(interfaceType);
+                }
+            }
+        }
     }
 }
