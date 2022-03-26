@@ -139,7 +139,5 @@ namespace K3 {
             if (m < float.Epsilon) return (default, default);
             return (vector / m, m);
         }
-
-
     }
 }

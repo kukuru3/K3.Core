@@ -51,23 +51,34 @@
         }
 
         static BaseModule InferModuleForScript(IModuleBehaviour script) {
+
+
             System.Type[] genericArguments = System.Array.Empty<System.Type>();
 
             var type = script.GetType();
-            while (type != null && genericArguments.Length == 0) {
-                type = type.BaseType;
-                genericArguments = type.GetGenericArguments();
+
+            var genericModuleBehaviourType = typeof(ModuleBehaviour<>);
+            var ownModuleBehaviourType = ReflectionUtility.GetTypeInInheritanceHierarchyThatIsImplementationOfRawGeneric(type, genericModuleBehaviourType);
+            if (ownModuleBehaviourType != null) {
+                var q = ownModuleBehaviourType.GetGenericArguments()[0];
+                return container.GetModule(q);
             }
-            if (genericArguments.Length == 0)
-                throw new System.Exception("Could not find the module type");
-
-            var q = genericArguments[0];
-
-            foreach (var module in container.Modules)
-                if (module.GetType().IsAssignableFrom(q))
-                    return module;
-
             return default;
+
+            //while (type != null && genericArguments.Length == 0) {
+            //    type = type.BaseType;
+            //    genericArguments = type.GetGenericArguments();
+            //}
+            //if (genericArguments.Length == 0)
+            //    throw new System.Exception("Could not find the module type");
+
+            //var q = genericArguments[0];
+
+            //foreach (var module in container.Modules)
+            //    if (module.GetType().IsAssignableFrom(q))
+            //        return module;
+
+            //return default;
         }
     }
 }

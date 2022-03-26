@@ -72,6 +72,7 @@
 
 
 using K3._ModularOld;
+using K3.Modules;
 
 using System.Collections.Generic;
 
@@ -121,6 +122,8 @@ namespace K3.Modules {
 
         T GetModule<T>();
 
+        BaseModule GetModule(System.Type t);
+
         void InstallModule(BaseModule module);
 
         void Clear();
@@ -156,5 +159,6 @@ namespace K3.Modules {
         }
 
         public T GetModule<T>() => moduleLocator.Locate<T>() ?? default;
+        public BaseModule GetModule(System.Type t) => (BaseModule)moduleLocator.Locate(t);
     }
 }

@@ -22,6 +22,9 @@ namespace K3 {
             return sum;
         }
 
+        public static bool Success(int threshold, int dieSides = 6) => Successes(1, threshold, dieSides) == 1;
+        public static bool PercentChance(this int threshold) => Success(100-threshold, 100);
+
     }
 
     static public partial class Randoms {
@@ -41,7 +44,7 @@ namespace K3 {
             return fromCollection[UnityEngine.Random.Range(0, fromCollection.Count)];
         }
 
-        static public float Deviate(float mean, float? sigma = null) {
+        static public float Deviate(this float mean, float? sigma = null) {
             if (!sigma.HasValue) sigma = Mathf.Abs(mean) * 0.3f;
             return mean + BoxMuller() * sigma.Value;
         }

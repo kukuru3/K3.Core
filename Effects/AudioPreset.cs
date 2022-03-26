@@ -64,7 +64,6 @@ namespace K3.Editor {
                 var maxDist = D * 30;
                 EditorGUILayout.HelpBox($"Log roloff, volume starts decaying at {minDist:F}m and falls off quickly after that", MessageType.Info);
             }
-
         }
     }
 }

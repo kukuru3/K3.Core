@@ -44,12 +44,17 @@ namespace K3.Locators {
             // cache.RemoveValue(obj);
         }
 
-        void BuildCacheIfNecessary<T>() {
-            var key = typeof(T);
+        void BuildCacheIfNecessary<T>() => BuildCacheIfNecessary(typeof(T));
+
+        void BuildCacheIfNecessary(Type key) {
             if (cache.Has(key)) return;
-            foreach (var item in allItemsInLocator) if (item is T titem) cache.Add(key, titem);
+            foreach (var item in allItemsInLocator) if (key.IsAssignableFrom(item.GetType())) cache.Add(key, item);
         }
 
+        public object Locate(Type key) {
+            BuildCacheIfNecessary(key);
+            return cache.First(key);
+        }
         public T Locate<T>() {
             var key = typeof(T);
             BuildCacheIfNecessary<T>();

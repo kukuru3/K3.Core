@@ -42,7 +42,7 @@ namespace K3.Effects {
         public bool Looping => looping;
 
         public float Pitch => Random.Range(minPitch, maxPitch);
-        public float Volume => Random.Range(minVolume, maxVolume);
+        public float Volume { get { var v = Random.Range(minVolume, maxVolume); return v * v; } }
     }
 }
 #if UNITY_EDITOR 

@@ -33,6 +33,14 @@ namespace K3 {
             return (p0, p1);
         }
 
+        static public (Vector3 center, float radius) GetBoxColliderWorldspaceSphericalApproximation(this BoxCollider bc) {
+            var t = bc.transform;
+            var center = t.TransformPoint(bc.center);
+            var size = t.TransformVector(bc.size);
+            var r = size.magnitude / Mathf.Sqrt(2f);
+            return (center, r);
+        }
+
         static public Vector3 AverageContactNormal(this Collision collision) {
             var averageContactNormal = Vector3.zero;
             int counter = 0;

@@ -93,7 +93,7 @@ namespace K3.Utility {
         }
 
         public void Remove(T @object) {
-            var key = objToKeyLookup[@object];
+            if (!objToKeyLookup.TryGetValue(@object, out var key)) return;
             GetCell(key).items.Remove(@object);
             objToKeyLookup.Remove(@object); 
         }

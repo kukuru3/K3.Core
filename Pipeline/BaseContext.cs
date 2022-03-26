@@ -14,6 +14,12 @@ namespace K3.Modules {
         protected IEnumerable<BaseComponent> AllComponents => componentLocator.LocateAll<BaseComponent>();
         protected IModuleContainer Container { get; private set; } 
 
+
+        public T CreateComponent<T>() where T: BaseComponent, new() {
+            var c = new T();
+            AddComponent(c);
+            return c;
+        }
         public void AddComponent(BaseComponent m) {
             components.Add(m);
             componentLocator.Register(m);
