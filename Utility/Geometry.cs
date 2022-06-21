@@ -139,5 +139,8 @@ namespace K3 {
             if (m < float.Epsilon) return (default, default);
             return (vector / m, m);
         }
+
+        public static Vector2 ToVec2(this (float x, float y) tuple) => new Vector2(tuple.x, tuple.y);
+        public static Vector2 ToVec2(this (int x, int y) tuple) => new Vector2(tuple.x, tuple.y);
     }
 }

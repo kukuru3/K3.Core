@@ -38,15 +38,21 @@
         public static void InjectModulesIntoBehaviours(UnityEngine.GameObject root) {
             if (container == null) UnityEngine.Debug.LogError("Cannot inject modules since container is not set");
             var cmps = root.GetComponentsInChildren<IModuleBehaviour>(true);
-            foreach (var cmp in cmps) {
-                var ctx = InferModuleForScript(cmp);
-                if (ctx != null) {
-                    cmp.InjectModule(ctx);
-                } else {
-                    var arg = cmp.GetType().BaseType.GetGenericArguments()[0];
-                    UnityEngine.Debug.LogWarning($"Was not able to inject the context into {cmp}, expected module of type {arg} but one does not exist");
-                    (cmp as UnityEngine.MonoBehaviour).enabled = false; // needs to be disabled so it doesn't emit Update() and similar callbacks
+
+            try {
+                foreach (var cmp in cmps) {
+                    var ctx = InferModuleForScript(cmp);
+                    if (ctx != null) {
+                        cmp.InjectModule(ctx);
+                    } else {
+                        var arg = cmp?.GetType()?.BaseType?.GetGenericArguments()?[0];
+                        UnityEngine.Debug.LogWarning($"Was not able to inject the context into {cmp},  expected module of type {arg} but one does not exist");
+                        (cmp as UnityEngine.MonoBehaviour).enabled = false; // needs to be disabled so it doesn't emit Update() and similar callbacks
+                    }
                 }
+            }
+            catch (System.Exception e) {
+                UnityEngine.Debug.LogWarning("Context injection errors");
             }
         }
 
