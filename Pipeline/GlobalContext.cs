@@ -70,8 +70,6 @@
 // instead, look into solving editor-specific edge cases by DETECTING EDITOR LAUNCH (via events; attributes?) AND AUTOMATICALLY GENERATING AN EDITOR-AWARE BOOTSTRAPPER
 // entry scene of course still exists, and still has the regular bootstrapper object and nothing else.
 
-
-using K3._ModularOld;
 using K3.Modules;
 
 using System.Collections.Generic;

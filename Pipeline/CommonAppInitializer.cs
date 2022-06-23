@@ -1,7 +1,7 @@
 ﻿using K3.Modules;
 using K3.Pipeline;
 
-namespace Embers.Program {
+namespace K3.Pipeline {
     public abstract class CommonAppInitializer : IPipelineInjector {
 
         protected IModuleContainer Container { get; private set; }

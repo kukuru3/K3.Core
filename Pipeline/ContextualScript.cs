@@ -51,7 +51,7 @@
                     }
                 }
             }
-            catch (System.Exception e) {
+            catch (System.Exception) {
                 UnityEngine.Debug.LogWarning("Context injection errors");
             }
         }
