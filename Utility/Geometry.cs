@@ -79,17 +79,39 @@ namespace K3 {
 
         public static Vector3? NormalizedInterceptVector(Vector3 interceptorPosition, Vector3 targetPosition, Vector3 targetVelocity, float interceptorVelocityMagnitude) {
             var O = interceptorPosition;
-            var P = targetPosition;
-            var u = targetVelocity;
-            var k = interceptorVelocityMagnitude;
+            var T = targetPosition;
+            var V = targetVelocity;
+            var s = interceptorVelocityMagnitude;
 
-            var termA = u.sqrMagnitude - k * k;
-            var termB = 2 * Vector3.Dot(P - O, u);
-            var termC = (P - O).sqrMagnitude;
+            // define C as point of collision, v as |V|, a as |OT|
+
+            // a) given angle α between two vectors x and y, cosα = (x•y)/(|x||y|)
+            // b) law of cosines: c² = a² + b² - 2abcosα (where α is angle opposite of c)
+
+            // from a) => cosα = (V•OT)/av 
+            // if we label our triangle side lenghts as a (TO), b (TC), c (CO), then we can represent them as:
+            // a = known, b = vt, c = st
+
+            // from b) : s²t² = a² + v²t² + 2avtcosα
+            
+            // Solving for t:                               (v²-s²)t² + 2avcosα t + a² = 0
+            // since cosα = V•OT/av, this simplifies to:    (v²-s²)t² + 2 V•OT + a² = 0
+            
+            var vecA = T - O;
+            var a = vecA.magnitude;
+
+            var termA = V.sqrMagnitude - s * s;
+            var termB = 2 * a * V.magnitude * 
+
+
+            //===========================================================
+            var termA = V.sqrMagnitude - s * s;
+            var termB = 2 * Vector3.Dot(vecA, V);
+            var termC = (T - O).sqrMagnitude;
 
             var t = Numbers.QuadraticEquation(termA, termB, termC).SmallestPositive();
             if (t.HasValue) {
-                var expectedTargetPosition = P + u * t.Value;
+                var expectedTargetPosition = T + V * t.Value;
                 return (expectedTargetPosition - interceptorPosition).normalized;
             } else {
                 return (targetPosition - interceptorPosition).normalized;
