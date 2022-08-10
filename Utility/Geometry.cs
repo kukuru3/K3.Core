@@ -95,19 +95,12 @@ namespace K3 {
             // from b) : s²t² = a² + v²t² + 2avtcosα
             
             // Solving for t:                               (v²-s²)t² + 2avcosα t + a² = 0
-            // since cosα = V•OT/av, this simplifies to:    (v²-s²)t² + 2 V•OT + a² = 0
+            // since cosα = V•OT/av, this simplifies to:    (v²-s²)t² + 2 V•OT t + a² = 0
             
             var vecA = T - O;
-            var a = vecA.magnitude;
-
-            var termA = V.sqrMagnitude - s * s;
-            var termB = 2 * a * V.magnitude * 
-
-
-            //===========================================================
             var termA = V.sqrMagnitude - s * s;
             var termB = 2 * Vector3.Dot(vecA, V);
-            var termC = (T - O).sqrMagnitude;
+            var termC = vecA.sqrMagnitude;
 
             var t = Numbers.QuadraticEquation(termA, termB, termC).SmallestPositive();
             if (t.HasValue) {

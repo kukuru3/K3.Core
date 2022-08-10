@@ -41,18 +41,20 @@ namespace K3.Pipeline {
         static internal void InitializeApplication() {
             RegisterEngineEvents();
             InitializeHookSystem();
-
-            injectors = K3.ReflectionUtility
-                .FindImplementingTypesInProject<IPipelineInjector>(true)
-                .Select(i => Activator.CreateInstance(i))
-                .Cast<IPipelineInjector>()
-                .ToArray();
+            injectors = GetPipelineInjectors().ToArray();
 
             pipelineObject = new PipelineInstance();
 
             LoopManipulator.ClearEvents();
             LoopManipulator.AddLoopEvents();
             foreach (var injector in injectors) injector.Inject(pipelineObject);
+        }
+
+        private static IEnumerable<IPipelineInjector> GetPipelineInjectors() {
+            return K3.ReflectionUtility
+                .FindImplementingTypesInProject<IPipelineInjector>(true)
+                .Select(i => Activator.CreateInstance(i))
+                .Cast<IPipelineInjector>();
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

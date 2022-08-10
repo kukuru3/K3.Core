@@ -4,7 +4,7 @@ using K3.Pipeline;
 namespace K3.Pipeline {
     public abstract class CommonAppInitializer : IPipelineInjector {
 
-        protected IModuleContainer Container { get; private set; }
+        protected IModuleContainer ModuleContainer { get; private set; }
         protected IPipeline Pipeline { get; private set; }
         public void Inject(IPipeline pipeline) {
 
@@ -24,7 +24,7 @@ namespace K3.Pipeline {
 
         void LaunchGame() {
             var container = new ModuleContainer();
-            Container = container;
+            ModuleContainer = container;
 
             ContextUtility.SetContainerInstance(container);
 
@@ -34,8 +34,8 @@ namespace K3.Pipeline {
         protected abstract void InitializeApplication(IModuleContainer context);
 
         protected virtual void ClearContext() {
-            Container.Clear();
-            Container = null;
+            ModuleContainer.Clear();
+            ModuleContainer = null;
         }
     }
 
