@@ -52,8 +52,6 @@ namespace K3 {
         /// <summary> Since Box-Muller generates 2 independent uniform variables during execution, we can save 1 for the next call.</summary>
         static private float? boxMullerSpare;
 
-
-
         static private float BoxMuller() {
 
             if (boxMullerSpare != null) {
@@ -73,4 +71,6 @@ namespace K3 {
             return y * fac;
         }
     }
+
+    
 }
