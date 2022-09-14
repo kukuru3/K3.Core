@@ -123,7 +123,7 @@ namespace K3.Modules {
         BaseModule GetModule(System.Type t);
 
         void InstallModule(BaseModule module);
-
+        void InstallModule<T>() where T : BaseModule, new();
         void Clear();
         void RemoveModule(BaseModule module);
     }
@@ -143,11 +143,13 @@ namespace K3.Modules {
 
         }
 
-        public void InstallModule(BaseModule module) {
+        void IModuleContainer.InstallModule(BaseModule module) {
             this.modules.Add(module);
             moduleLocator.Register(module);
             module.InjectContainer(this);
         }
+
+        void IModuleContainer.InstallModule<T>() => ((IModuleContainer)this).InstallModule(new T());
 
         public void RemoveModule(BaseModule module) {
             if (modules.Remove(module)) { 

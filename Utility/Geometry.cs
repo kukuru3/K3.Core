@@ -149,7 +149,7 @@ namespace K3 {
         public static Vector2 Flatten(this Vector3 vector) => new Vector2(vector.x, vector.z);
         public static Vector3 Deflatten(this Vector2 vector) => new Vector3(vector.x, 0, vector.y);
         public static Vector3 Planarized(this Vector3 vector) => new Vector3(vector.x, 0, vector.z);
-        public static (Vector3 unitVector, float magnitude) Parametrized(this Vector3 vector) {
+        public static (Vector3 unitVector, float magnitude) Decompose(this Vector3 vector) {
             var m = vector.magnitude;
             if (m < float.Epsilon) return (default, default);
             return (vector / m, m);

@@ -8,7 +8,7 @@ namespace K3 {
             return targetFrom + t * (targetTo - targetFrom);
         }
 
-        public static int Map(this int source, int sourceFrom, int sourceTo, int targetFrom, int targetTo, bool constrained = false) {
+        public static int Map(this int source, int sourceFrom, int sourceTo, int targetFrom, int targetTo, bool constrained = true) {
             var t = (float)(source - sourceFrom) / (sourceTo - sourceFrom);
             if (constrained) t = Mathf.Clamp01(t);
             return Mathf.RoundToInt(targetFrom + t * (targetTo - targetFrom));

@@ -39,7 +39,7 @@
             if (container == null) UnityEngine.Debug.LogError("Cannot inject modules since container is not set");
             var cmps = root.GetComponentsInChildren<IModuleBehaviour>(true);
 
-            try {
+            // try {
                 foreach (var cmp in cmps) {
                     var ctx = InferModuleForScript(cmp);
                     if (ctx != null) {
@@ -50,10 +50,10 @@
                         (cmp as UnityEngine.MonoBehaviour).enabled = false; // needs to be disabled so it doesn't emit Update() and similar callbacks
                     }
                 }
-            }
-            catch (System.Exception) {
-                UnityEngine.Debug.LogWarning("Context injection errors");
-            }
+            //}
+            //catch (System.Exception) {
+            //    UnityEngine.Debug.LogWarning("Context injection errors");
+            //}
         }
 
         static BaseModule InferModuleForScript(IModuleBehaviour script) {

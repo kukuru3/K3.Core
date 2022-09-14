@@ -1,5 +1,6 @@
 {
     "name": "K3.Core",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [
         "Editor",
