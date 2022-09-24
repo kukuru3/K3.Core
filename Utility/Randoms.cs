@@ -5,8 +5,10 @@ using UnityEngine;
 namespace K3 {
 
     static public partial class Dice {
+        
         /// <summary>Rolls a dice with results 1-100</summary>
         public static int D100 => 1+Random.Range(0, 100);
+        
         public static int Successes(int dice, int threshold, int dieSides = 6) {
             var counter = 0;
             for (var i = 0; i < dice; i++)

@@ -3,6 +3,21 @@ using System.Net.WebSockets;
 
 namespace K3 {
     
+    public static class Cypher {
+        // For security purposes, we don't want to name groups "Group 1", "Group 2..."
+        // so we use a simple block cypher. It's literally just code some guy posted on StackOverflow
+        // source: https://stackoverflow.com/questions/1971657/32-bit-block-cipher-for-net/9718378
+        // but it's fast and I ran an automated test that detected no collisions so it seems it truly is a 1-1 block cypher.
+        // and it's helluva faster to transmit than a GUID would ever be.
+        public static uint UltraSimpleBlockCypher(uint key, uint data)
+        {
+            uint R = (data ^ key) & 0xFFFF, L = (data >> 16) ^ (((((R >> 5) ^ (R << 2)) + ((R >> 3) ^ (R << 4))) ^ ((R ^ 0x79b9) + R)) & 0xFFFF);
+            key = (key >> 3) | (key << 29);
+            R ^= ((((L >> 5) ^ (L << 2)) + ((L >> 3) ^ (L << 4))) ^ ((L ^ 0xf372) + (L ^ key))) & 0xFFFF;
+            return ((L ^ ((((R >> 5) ^ (R << 2)) + ((R >> 3) ^ (R << 4))) ^ ((R ^ 0x6d2b) + (R ^ ((key >> 3) | (key << 29)))))) << 16) | R;
+        }
+    }
+
     static class KrandUtils {
         internal static ulong Squirrel3(ulong position, ulong seed = 0) {
             const ulong BIT_NOISE1 = 0xB5297A4DB5297A4D;
