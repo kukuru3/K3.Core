@@ -1,5 +1,4 @@
 ﻿using K3.Modules;
-using K3.Pipeline;
 
 namespace K3.Pipeline {
     public abstract class CommonAppInitializer : IPipelineInjector {
@@ -7,7 +6,7 @@ namespace K3.Pipeline {
         protected IModuleContainer ModuleContainer { get; private set; }
         protected IPipeline Pipeline { get; private set; }
         public void Inject(IPipeline pipeline) {
-
+            
             Pipeline = pipeline;
             Pipeline.RegisterMethod(IPipeline.Triggers.AppStart, LaunchGame);
             Pipeline.RegisterMethod(IPipeline.Triggers.Teardown, ClearContext);
@@ -23,6 +22,7 @@ namespace K3.Pipeline {
         }
 
         void LaunchGame() {
+            UnityEngine.Debug.Log("Launch game");
             var container = new ModuleContainer();
             ModuleContainer = container;
 

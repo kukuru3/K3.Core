@@ -42,7 +42,8 @@ namespace K3.Pipeline {
             RegisterEngineEvents();
             InitializeHookSystem();
             injectors = GetPipelineInjectors().ToArray();
-
+            if (injectors.Length == 0) 
+                Debug.LogWarning($"Found ZERO pipeline injectors, this is usually not a good sign");            
             pipelineObject = new PipelineInstance();
 
             LoopManipulator.ClearEvents();
