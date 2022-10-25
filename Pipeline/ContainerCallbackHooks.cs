@@ -1,13 +1,12 @@
 ﻿// new architecture: 
 
 // - MULTICONTEXT: 
-// - instead of having only one context, we can have multiple ones.
-// - contexts exist in parallel, are not in any mutual hierarchical relationship,
-// and may locate each other's references
-// - contexts can be created and destroyed during runtime
+// - multiple modules exist in parallel, with no direct mutual relationship
+// - dependencies are possible between modules
+// - modules can be created and destroyed during runtime
 
-// - view layer scripts should be context-bound
-// - destroying a context should remove all view elements bound to that context.
+// - view layer scripts should be module-bound
+// - destroying a module should remove all view elements bound to that module.
 
 // - MasterContext would contain crucial global references such as data repository, unity message pump, etc.
 // - MenuContext would contain menu related stuff
@@ -18,24 +17,9 @@
 // major game state changes / loads / transitions are driven by context creation and destruction.
 // context creation can initiate loading and view generator 
 
-// each context may have its own module container.
-
+// each context may have its own component container.
 
 // initialization / bootstrap shenanigans:
-// in a build, we will only have the bootstrapper and no other objects in the scene.
-
-// builders / loadscripts will then build scenes, which will include instantiation of context objects.
-// All scene build instantiations will be regulated and so bootstrapper / initializers will know that these 
-// objects have been instantiated and are thus able to inject the proper context into them.
-
-// consider to have a ContextInjectionMarker monobehaviour to "mark" these objects so we can avoid a GetComponentsInChildren<>
-// (the ContextInjectionMarker might do the GetComponents... but that's okay)
-
-// HOWEVER, in the editor scenes, we will have the bootstrapper and some objects already present in the scene.
-
-// additionally, we must handle DISABLED OBJECTS, either those instantiated as disabled, or those present in the scene as disabled.
-// I vote that we inject the context in those as well. 
-// Their initialization / insertion into containers can wait.
 
 // In order for a script to INITIALIZE, the following must be true:
 // - the script must be active in hierarchy
@@ -71,15 +55,16 @@
 // entry scene of course still exists, and still has the regular bootstrapper object and nothing else.
 
 using K3.Modules;
-
+using System;
 using System.Collections.Generic;
 
 namespace K3.Pipeline {
 
     class ContainerCallbackHoooks {
 
-        readonly Modules.ModuleContainer moduleHolder;
-        public ContainerCallbackHoooks(Modules.ModuleContainer context) {
+        readonly ModuleContainer moduleHolder;
+        
+        public ContainerCallbackHoooks(ModuleContainer context) {
             this.moduleHolder = context;
         }
 
@@ -93,72 +78,18 @@ namespace K3.Pipeline {
             }
         }
 
-        public void Frame() {
+        internal void Frame() {
             Propagate<IExecutesFrame>(f => f.Frame());
-            //foreach (var module in moduleHolder.Modules) if (module is IExecutesFrame framer) framer.Frame();
         }
 
-        public void LateUpdate() {
+        internal void LateUpdate() {
             Propagate<IExecutesLateUpdate>(ielu => ielu.LateUpdate());
-            // foreach (var ctx in moduleHolder.Modules) if (ctx is IExecutesLateUpdate framer) framer.LateUpdate();
         }
 
-        public void Tick() {
+        internal void Tick() {
             Propagate<IExecutesTick>(ticker => ticker.Tick());
-            // foreach (var ctx in moduleHolder.Modules) if (ctx is IExecutesTick ticker) ticker.Tick();
         }
 
     }
 
-}
-
-
-namespace K3.Modules {
-
-    public interface IModuleContainer {
-        IEnumerable<BaseModule> Modules { get; }
-
-        T GetModule<T>();
-
-        BaseModule GetModule(System.Type t);
-
-        void InstallModule(BaseModule module);
-        void InstallModule<T>() where T : BaseModule, new();
-        void Clear();
-        void RemoveModule(BaseModule module);
-    }
-
-    internal class ModuleContainer : IModuleContainer {
-        Locators.SimpleLocator moduleLocator = new Locators.SimpleLocator(); 
-        List<BaseModule> modules = new List<BaseModule>();
-
-        public IEnumerable<BaseModule> Modules => modules;
-
-        public void Clear() {
-            foreach (var module in modules.ToArray()) module.DestroyModule();
-            modules.Clear();
-        }
-
-        public ModuleContainer() {
-
-        }
-
-        void IModuleContainer.InstallModule(BaseModule module) {
-            this.modules.Add(module);
-            moduleLocator.Register(module);
-            module.InjectContainer(this);
-        }
-
-        void IModuleContainer.InstallModule<T>() => ((IModuleContainer)this).InstallModule(new T());
-
-        public void RemoveModule(BaseModule module) {
-            if (modules.Remove(module)) { 
-                moduleLocator.Unregister(module);
-                module.DestroyModule();
-            }
-        }
-
-        public T GetModule<T>() => moduleLocator.Locate<T>() ?? default;
-        public BaseModule GetModule(System.Type t) => (BaseModule)moduleLocator.Locate(t);
-    }
 }
