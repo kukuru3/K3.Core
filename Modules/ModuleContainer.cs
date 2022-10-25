@@ -44,8 +44,7 @@ namespace K3.Modules {
                 InvalidateLookupCache();
             }
         }
-
-
+        
         public T GetModule<T>() => moduleLocator.Locate<T>() ?? default;
         
         public BaseModule GetModule(Type t) {
