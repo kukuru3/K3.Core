@@ -95,7 +95,6 @@ namespace K3.Pipeline {
             foreach (var list in hooksPerTrigger) list.RemoveAll(item => item.method == method);
         }
 
-
         struct MethodHook {
             internal IPipeline.Triggers trigger;
             internal int priority;

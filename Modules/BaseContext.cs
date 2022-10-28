@@ -13,7 +13,9 @@ namespace K3.Modules {
         protected IModuleContainer Container { get; private set; } 
 
 
-        public T CreateComponent<T>() where T: BaseComponent, new() {
+        public T CreateComponent<T>(bool unique = true) where T: BaseComponent, new() {
+            if (unique && componentLocator.Locate<T>() != null)
+                throw new System.InvalidOperationException($"A component of type {typeof(T).Name} already exists in {this.GetType().Name}");
             var c = new T();
             AddComponent(c);
             return c;
@@ -22,6 +24,18 @@ namespace K3.Modules {
             components.Add(m);
             componentLocator.Register(m);
             m.InjectModule(this);
+        }
+
+        public void RemoveComponent(BaseComponent m) {
+            if (components.Remove(m)) {
+                componentLocator.Unregister(m);
+                m.Release();
+            }
+        }
+
+        public void RemoveComponents<T>() {
+            foreach (var cmp in components) if (cmp is T) { componentLocator.Unregister(cmp); cmp.Release(); }
+            components.RemoveAll(c => c is T);
         }
 
         public IEnumerable<T> ListComponents<T>() {

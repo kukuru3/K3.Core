@@ -30,7 +30,7 @@ namespace K3.Locators {
             if (obj == null) return;
 
             if (allItemsInLocator.Add(obj)) {
-                var key = obj.GetType();
+                // var key = obj.GetType();
                 cache.Clear();
                 //var baseTypes = ReflectionUtility.FindAllBaseTypes(key);
                 //foreach (var t in baseTypes) {
@@ -40,7 +40,8 @@ namespace K3.Locators {
         }
 
         public void Unregister(object obj) {
-            cache.Clear();
+            if (allItemsInLocator.Remove(obj))
+                cache.Clear();
             // cache.RemoveValue(obj);
         }
 

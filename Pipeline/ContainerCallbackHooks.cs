@@ -55,8 +55,6 @@
 // entry scene of course still exists, and still has the regular bootstrapper object and nothing else.
 
 using K3.Modules;
-using System;
-using System.Collections.Generic;
 
 namespace K3.Pipeline {
 

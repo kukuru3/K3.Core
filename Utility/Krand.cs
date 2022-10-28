@@ -1,5 +1,4 @@
 using System;
-using System.Net.WebSockets;
 
 namespace K3 {
     
@@ -18,8 +17,8 @@ namespace K3 {
         }
     }
 
-    static class KrandUtils {
-        internal static ulong Squirrel3(ulong position, ulong seed = 0) {
+    public static class KrandUtils {
+        public static ulong Squirrel3(ulong position, ulong seed = 0) {
             const ulong BIT_NOISE1 = 0xB5297A4DB5297A4D;
             const ulong BIT_NOISE2 = 0x68E31DA468E31DA4;
             const ulong BIT_NOISE3 = 0x1B56C4E91B56C4E9;
@@ -37,9 +36,9 @@ namespace K3 {
             return mangled;
         }
 
-        static KRand defaultKrander = new KRand(DateTime.Now.GetHashCode());
+        static readonly KRand defaultKrander = new(DateTime.Now.GetHashCode());
 
-        public static bool PercentChance(this int threshold) => defaultKrander.Success(100-threshold, 100);
+        public static bool PctChance(this int threshold) => defaultKrander.Success(100-threshold, 100);
     }
 
     public class KRand {
@@ -51,12 +50,10 @@ namespace K3 {
             position = 0;
         }
         
-        public KRand(int seed = 0) {
-            unchecked { 
-                this.seed = (ulong)(seed);
-            }
-        }
-        
+        public KRand(int seed = 0) { unchecked {  this.seed = (ulong)(seed); } }
+        public KRand(ulong seed = 0) => this.seed = seed;
+        public KRand(long seed = 0) { unchecked {  this.seed = (ulong)(seed); } }
+
         ulong _NextUlong() {
             return KrandUtils.Squirrel3(position++, seed);
         }

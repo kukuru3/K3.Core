@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace K3.Modules {
 
@@ -11,7 +12,7 @@ namespace K3.Modules {
         BaseModule GetModule(System.Type t);
 
         void InstallModule(BaseModule module);
-        void InstallModule<T>() where T : BaseModule, new();
+        T InstallModule<T>() where T : BaseModule, new();
         void Clear();
         void RemoveModule(BaseModule module);
     }
@@ -21,7 +22,14 @@ namespace K3.Modules {
         List<BaseModule> modules = new List<BaseModule>();
         Dictionary<Type, BaseModule> lookupCache = new();
 
-        public IEnumerable<BaseModule> Modules => modules;
+        List<BaseModule> safeCopy;
+        
+        public IEnumerable<BaseModule> Modules { get {
+            // this roundabout thing is so we can foreach 
+            // over the modules
+            safeCopy ??= new List<BaseModule>(modules);
+            return safeCopy;
+        } }
 
         public void Clear() {
             foreach (var module in modules.ToArray()) module.DestroyModule();
@@ -29,16 +37,22 @@ namespace K3.Modules {
         }
 
         void IModuleContainer.InstallModule(BaseModule module) {
+            UnityEngine.Debug.Log($"<color=#c0c0c0><b>Creating module</b></color> : {module.GetType()}");
             this.modules.Add(module);
             moduleLocator.Register(module);
             module.InjectContainer(this);
             InvalidateLookupCache(); // not strictly necessary but eh.
         }
 
-        void IModuleContainer.InstallModule<T>() => ((IModuleContainer)this).InstallModule(new T());
+        T IModuleContainer.InstallModule<T>() {
+            var module = new T();
+            ((IModuleContainer)this).InstallModule(module);
+            return module;
+        }
 
         public void RemoveModule(BaseModule module) {
             if (modules.Remove(module)) { 
+                UnityEngine.Debug.Log($"<color=#f0a070><b>Removing module</b></color> : {module.GetType()}");
                 moduleLocator.Unregister(module);
                 module.DestroyModule();
                 InvalidateLookupCache();
@@ -54,7 +68,9 @@ namespace K3.Modules {
             return value;
         }
 
-        private void InvalidateLookupCache() => lookupCache.Clear();
-
+        private void InvalidateLookupCache() {
+            lookupCache.Clear();
+            safeCopy = null;
+        }
     }
 }

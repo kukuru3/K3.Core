@@ -37,17 +37,23 @@
 
         public static void InjectModulesIntoBehaviours(UnityEngine.GameObject root) {
             if (container == null) UnityEngine.Debug.LogError("Cannot inject modules since container is not set");
-            var cmps = root.GetComponentsInChildren<IModuleBehaviour>(true);
+            var components = root.GetComponentsInChildren<IModuleBehaviour>(true);
 
             // try {
-                foreach (var cmp in cmps) {
-                    var ctx = InferModuleForScript(cmp);
-                    if (ctx != null) {
-                        cmp.InjectModule(ctx);
+                foreach (var component in components) {
+                    var appropriateModule = InferModuleForScript(component);
+                    if (appropriateModule != null) {
+                        // UnityEngine.Debug.Log($"Injecting {appropriateModule} into {component}");
+                        component.InjectModule(appropriateModule);
                     } else {
-                        var arg = cmp?.GetType()?.BaseType?.GetGenericArguments()?[0];
-                        UnityEngine.Debug.LogWarning($"Was not able to inject the context into {cmp},  expected module of type {arg} but one does not exist");
-                        (cmp as UnityEngine.MonoBehaviour).enabled = false; // needs to be disabled so it doesn't emit Update() and similar callbacks
+                        try { 
+                            var inheritingTypeInHierarchy = component.GetType().GetTypeInInheritanceHierarchyThatIsImplementationOfRawGeneric(typeof(ModuleBehaviour<>));
+                            var argument = inheritingTypeInHierarchy.GetGenericArguments()[0];
+                            UnityEngine.Debug.LogWarning($"Was not able to inject the context into {component},  expected module of type {argument} but one does not exist");
+                            (component as UnityEngine.MonoBehaviour).enabled = false; // needs to be disabled so it doesn't emit Update() and similar callbacks
+                        } catch (System.IndexOutOfRangeException) {
+                            UnityEngine.Debug.LogWarning($"Context inferrence failed for {component}; does it not implement {typeof(ModuleBehaviour<>).Name} properly?!");
+                        }
                     }
                 }
             //}
