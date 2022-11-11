@@ -63,9 +63,7 @@
         }
 
         static BaseModule InferModuleForScript(IModuleBehaviour script) {
-
-
-            System.Type[] genericArguments = System.Array.Empty<System.Type>();
+            //System.Type[] genericArguments = System.Array.Empty<System.Type>();
 
             var type = script.GetType();
 

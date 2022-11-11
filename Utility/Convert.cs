@@ -29,7 +29,7 @@ namespace K3 {
                 mag += 1;
                 adjustedSize /= 1024;
             }
-            return $"{adjustedSize:decimalPlaces}{byteSizeSuffixes[mag]}";
+            return adjustedSize.ToString($"F{decimalPlaces}") + byteSizeSuffixes[mag];
         }
 
         static public float ToMach(float metersPerSecond) {

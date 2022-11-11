@@ -66,12 +66,30 @@ namespace K3 {
                 return Path.Combine(l.ToArray());
             }
 
-            //static public string EditorGetAssetsFolder
-
             [UnityEditor.MenuItem("K3 Tools/Dump folders")]
             static void DumpFolders() {
                 Debug.Log($"editor project root : {GetProjectPath("Data")}");
                 Debug.Log($"editor logfile: {GetLogFilePath()}");
+            }
+            
+            [UnityEditor.MenuItem("K3 Tools/Navigate to editor logfile")]
+            static public void HiglightEditorLogFileInExplorer() {
+                var finalPath = GetLogFilePath();
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,{finalPath}");
+            }
+
+            [UnityEditor.MenuItem("K3 Tools/Navigate to build logfile")]
+            static public void HiglightBuildLogFileInExplorer() {                
+                var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                var finalPath = $"{userProfile}\\AppData\\LocalLow\\{Application.companyName}\\{Application.productName}\\Player.log";
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{finalPath}\"");
+            }
+
+            [UnityEditor.MenuItem("K3 Tools/Navigate to Application.persistentDataPath(editor)")]
+            static public void GetAppDataPath() {
+                var p = Application.persistentDataPath;
+                p = p.Replace("/", "\\");
+                System.Diagnostics.Process.Start("explorer.exe", $"select,\"{p}\"");
             }
         }
     }
