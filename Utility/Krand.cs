@@ -36,7 +36,7 @@ namespace K3 {
             return mangled;
         }
 
-        static readonly KRand defaultKrander = new(DateTime.Now.GetHashCode());
+        static readonly KRand defaultKrander = new KRand(DateTime.Now.GetHashCode());
 
         public static bool PctChance(this int threshold) => defaultKrander.Success(100-threshold, 100);
     }

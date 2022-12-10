@@ -14,7 +14,7 @@ namespace K3.Effects {
         [SerializeField] UnityEngine.Audio.AudioMixerGroup mixerGroup;
 
         #pragma warning restore 649
-        public void Apply(AudioSource source) {
+        public virtual void Apply(AudioSource source) {
 
             if (ambient < 0.5f) {
                 source.spatialBlend = 1f; // 3d

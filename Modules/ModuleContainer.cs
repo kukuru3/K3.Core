@@ -19,7 +19,7 @@ namespace K3.Modules {
     internal class ModuleContainer : IModuleContainer {
         Locators.SimpleLocator moduleLocator = new Locators.SimpleLocator(); 
         List<BaseModule> modules = new List<BaseModule>();
-        Dictionary<Type, BaseModule> lookupCache = new();
+        Dictionary<Type, BaseModule> lookupCache = new Dictionary<Type, BaseModule>();
 
         List<BaseModule> safeCopy;
         

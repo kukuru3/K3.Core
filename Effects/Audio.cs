@@ -20,7 +20,7 @@ namespace K3.Effects
             audioSource.bypassListenerEffects = bypass;
             
             audioSource.loop = bank.Looping;
-            bank.Propagation.Apply(audioSource);
+            bank.Propagation?.Apply(audioSource);
             audioSource.playOnAwake = false;
             
             audioSource.bypassEffects = bypass;
