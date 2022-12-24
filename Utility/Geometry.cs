@@ -155,6 +155,20 @@ namespace K3 {
             return (vector / m, m);
         }
 
+        public static (Vector2 planar, float vertical) DecomposeHV(this Vector3 vector) {
+            return (new Vector2(vector.x, vector.z), vector.y);
+        }
+        
+        public static Vector3 ComposeVector3(this (Vector2 planar, float vertical) source) {
+            return new Vector3(source.planar.x, source.vertical, source.planar.y);
+        }
+
+        public static (Vector2 unitVector, float magnitude) Decompose(this Vector2 vector) {
+            var m = vector.magnitude;
+            if (m < float.Epsilon) return (default, default);
+            return (vector / m, m);
+        }
+
         public static Vector2 ToVec2(this (float x, float y) tuple) => new Vector2(tuple.x, tuple.y);
         public static Vector2 ToVec2(this (int x, int y) tuple) => new Vector2(tuple.x, tuple.y);
     }

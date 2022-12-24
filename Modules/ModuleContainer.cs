@@ -11,7 +11,7 @@ namespace K3.Modules {
         BaseModule GetModule(System.Type t);
 
         void InstallModule(BaseModule module);
-        T InstallModule<T>() where T : BaseModule, new();
+        T CreateAndLaunchModule<T>() where T : BaseModule, new();
         void Clear();
         void RemoveModule(BaseModule module);
     }
@@ -43,7 +43,7 @@ namespace K3.Modules {
             InvalidateLookupCache(); // not strictly necessary but eh.
         }
 
-        T IModuleContainer.InstallModule<T>() {
+        T IModuleContainer.CreateAndLaunchModule<T>() {
             var module = new T();
             ((IModuleContainer)this).InstallModule(module);
             return module;
