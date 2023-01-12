@@ -49,7 +49,7 @@ namespace K3.Effects {
 namespace K3.Editor {
     using K3.Effects;
     using UnityEditor;
-    [CustomEditor(typeof(SoundBank))]
+    [CustomEditor(typeof(SoundBank)), CanEditMultipleObjects]
     public class SoundBankInspector : Editor {
         public override void OnInspectorGUI() {
             serializedObject.Update();

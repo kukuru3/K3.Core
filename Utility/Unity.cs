@@ -71,13 +71,16 @@ namespace K3 {
         static public T[] FindAllObjectsOfTypeIncludingInactive<T>() {
             var loadedScenes = GetScenes(loadedOnly: false);
             var gameObjects = loadedScenes.SelectMany(scene => scene.GetRootGameObjects());
-
             gameObjects = gameObjects.Union(GetDontDestroyOnLoadObjects());
             var components = gameObjects.SelectMany(gameObject => gameObject.GetComponentsInChildren<T>(true)).ToArray();
             return components;
         }
 
         static GameObject[] GetDontDestroyOnLoadObjects() {
+            #if UNITY_EDITOR
+            if (!Application.isPlaying) return new GameObject[0];
+            #endif
+            
             GameObject temp = null;
             try {
                 temp = new GameObject();

@@ -121,6 +121,24 @@ namespace K3 {
             return null;
         }
 
+        static public Type GetFirstConcreteType(Type type) {
+            for (var t = type; t != null; t = t.BaseType)
+                if (!t.IsAbstract) return t;
+            return null;
+        }
+
+        static public IEnumerable<Type> GetTypesInImplementationHierarchyThatIsImplementationOfRawGeneric(this Type toCheck, Type genericType) {
+
+            var q = new Queue<Type>();
+            q.Enqueue(toCheck);
+
+            while (q.Count > 0) {
+                var type = q.Dequeue();
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == genericType) yield return type;
+                foreach (var i in toCheck.GetInterfaces()) q.Enqueue(i);
+            }
+        }
+
         static Collections.Multidict<Type, Type> _derivationCache = new Collections.Multidict<Type, Type>();
 
         static public IEnumerable<Type> FindAllBaseTypes(Type derivedType) {
