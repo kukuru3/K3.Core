@@ -43,6 +43,23 @@ namespace K3 {
             P.localScale = Vector3.one * scale;
         }
 
+        public static Pose GetPoseSuchThatChildCoincidesWithReferenceValues(Transform P, Transform C, Quaternion referenceRotation, Vector3 referencePosition) {
+            const float scale = 1f;
+            if (P == null || C == null) {
+                Debug.LogWarning($"Unable to coincide parent, all references must be non-null) (P,C = {P}, {C})");
+                return default;
+            }
+            var rotationParentToChild = Quaternion.Inverse(P.rotation) * C.rotation; // normally this is child local rotation, but we can't guarantee it's an immediate child
+            var childRelativePos = P.InverseTransformPoint(C.position);
+            var parentRot = referenceRotation * Quaternion.Inverse(rotationParentToChild);
+
+            return new Pose(
+                referencePosition - parentRot * childRelativePos * scale,
+                parentRot
+            );
+            
+        }
+
         public static Quaternion SmoothDamp(Quaternion rot, Quaternion target, ref Quaternion deriv, float time) {
             if (Time.deltaTime < Mathf.Epsilon) return rot;
             // account for double-cover
