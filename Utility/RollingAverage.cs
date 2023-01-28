@@ -58,4 +58,11 @@ namespace K3.Utility {
         protected override Vector3 DoGetAverage() => currentSum / Length;
     }
 
+    public class RollingAverageVector2 : RollingAverage<Vector2> {
+        public RollingAverageVector2(int bufferSize) : base(bufferSize) { }
+        protected override void DecrementSum(Vector2 value) => currentSum -= value;
+        protected override Vector2 DoGetAverage() => currentSum / Length;
+        protected override void IncrementSum(Vector2 value) => currentSum += value;
+    }
+
 }

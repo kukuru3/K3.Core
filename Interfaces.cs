@@ -35,6 +35,7 @@ namespace K3 {
         IEnumerable<T> AllElements { get; }
         void Add(T item);
         void Remove(T item);
+        bool Contains(T item);
 
         void ExecutePerItem(System.Action<T> toExecute, System.Action<T> onRemoval = null);
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 
 namespace K3 {
     public static class Convert {
@@ -60,5 +61,25 @@ namespace K3 {
                 return Expression.Lambda<Func<S, T>>(c, p).Compile();
             }
         }
+    }
+
+    public static class CastHelper
+    {
+	    public static T ByteBlobToStruct<T>(this byte[] data) where T : struct
+	    {
+		    var pData = GCHandle.Alloc(data, GCHandleType.Pinned);
+		    var result = (T)Marshal.PtrToStructure(pData.AddrOfPinnedObject(), typeof(T));
+		    pData.Free();
+		    return result;
+	    }
+
+	    public static byte[] StructToByteBlob<T>(this T data) where T : struct
+	    {
+		    var result = new byte[Marshal.SizeOf(typeof(T))];
+		    var pResult = GCHandle.Alloc(result, GCHandleType.Pinned);
+		    Marshal.StructureToPtr(data, pResult.AddrOfPinnedObject(), true);
+		    pResult.Free();
+		    return result;
+	    }
     }
 }
