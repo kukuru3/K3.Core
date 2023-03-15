@@ -6,6 +6,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace K3 {
+    
     static public class ReflectionUtility {
 
         static List<Assembly> gameAssemblies;
@@ -80,8 +81,6 @@ namespace K3 {
             var property = obj.GetType().GetProperty(fieldName, flags);
             var val = property.GetValue(obj);
             return (T)val;
-
-
         }
 
         public static IEnumerable<Type> FindImplementingTypesInAssembly(Type t, Assembly ass, bool concreteOnly) {
@@ -166,6 +165,10 @@ namespace K3 {
             }
         }
 
-        
+        static public Type FindConcreteTypeBySimpleName(string tn) {
+            var tt = FindImplementingTypesInProject<object>(true);
+            foreach (var type in tt) if (type.Name == tn) return type;
+            return default;
+        }
     }
 }

@@ -36,7 +36,7 @@ namespace K3.Modules {
         }
 
         void IModuleContainer.InstallModule(BaseModule module) {
-            UnityEngine.Debug.Log($"<color=#c0c0c0><b>Creating module</b></color> : {module.GetType()}");
+            UnityEngine.Debug.Log($"<color=#a0f0a0><b>Creating module</b></color> : {module.GetType()}");
             this.modules.Add(module);
             moduleLocator.Register(module);
             module.InjectContainer(this);
