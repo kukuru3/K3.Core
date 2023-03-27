@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 namespace K3 {
     static public class FactoryUtility {
         public abstract class Factory<TKey,TValue> {
-            protected Dictionary<TKey, Func<TValue>> alreadyCached = new();
+            private Dictionary<TKey, Func<TValue>> alreadyCached = new();
 
             public TValue ProduceInstance(TKey key) {
                 if (!alreadyCached.TryGetValue(key, out var factoryMethod)) {

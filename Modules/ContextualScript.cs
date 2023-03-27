@@ -6,6 +6,8 @@
     public abstract class ModuleBehaviour<TModule> : UnityEngine.MonoBehaviour, IModuleBehaviour where TModule : IAppModule {
         protected TModule Module { get; private set; }
 
+        internal bool AlreadyLaunched => Module != null;
+
         protected T GetModuleComponent<T>() {
             var c = Module.GetModuleComponent<T>();
             if (c == null) throw new System.Exception($"{this} wants module {Module} to provide component of type `{typeof(T).Name}`, but none were declared");
@@ -13,6 +15,7 @@
         }
 
         void IModuleBehaviour.InjectModule(IAppModule module) {
+            if (AlreadyLaunched) return; // we fiddle with ModuleBehaviours already in the scene so double initialization is a possibility; here we guard from that.
             Module = (TModule)module;
             Launch();
         }
