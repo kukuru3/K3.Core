@@ -29,7 +29,7 @@ namespace K3.ReactiveWorld {
     // - rocket in flight has "whoosh" audio source, a light, and a particle trail. When the rocket hits anything, its effect view
     //   is detached and phases out (stopping particle emission, and living until the light phases out and there are no more particles
 
-    public class ComboEffectView : Script {
+    public class ComboEffectView : MonoBehaviour {
 
         ParticleSystem[] particles;
         AudioSource[] sources;
@@ -94,7 +94,7 @@ namespace K3.ReactiveWorld {
 
         Dictionary<Component, float> cachedValues = new Dictionary<Component, float>();
 
-        protected override void Init() { 
+        void Start() { 
             sources = GetComponentsInChildren<AudioSource>();
             particles = GetComponentsInChildren<ParticleSystem>();
             lights = GetComponentsInChildren<Light>();
@@ -144,9 +144,9 @@ namespace K3.ReactiveWorld {
             return se;
         }
 
-        protected override void Teardown(bool becauseOfExitingApp) {
+        protected void OnDestroy() {
             // check for abrupt death
-            if (!becauseOfExitingApp && !sanctionedDestruction) Debug.Log($"{name} being destroyed without phasing out.");
+            if (!sanctionedDestruction) Debug.Log($"{name} being destroyed without phasing out.");
         }
 
         public void LooselyAttachToObject(Transform newParent, bool preserveRelativePosition) {
@@ -215,7 +215,7 @@ namespace K3.ReactiveWorld {
             else return true;
         }
 
-        protected internal override void Logic() {
+        protected void Tick() {
             // if manual control, no sources are audible, and no particles are emitting, and no lights are glowing, destroy this.
             if (manuallyControlled || deathProcess) {
                 // note: if you have lights and audios that are unmanaged by curves

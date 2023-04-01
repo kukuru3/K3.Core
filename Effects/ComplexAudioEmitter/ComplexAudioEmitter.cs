@@ -12,7 +12,7 @@ namespace K3.Effects {
     /// Input feed values will default to 0.0 and you are expected to give them values at runtime.
     /// A feed is accessible with either a string name or integer index.
     /// </summary>
-    public partial class ComplexAudioEmitter : K3.Script, IFeedReceiver, IChannelMaster {
+    public partial class ComplexAudioEmitter : MonoBehaviour, IFeedReceiver, IChannelMaster {
         #pragma warning disable 649
         [SerializeField] Channel[] channels;
         [SerializeField] string[] feeds;
@@ -61,7 +61,7 @@ namespace K3.Effects {
             set => SetFeed(0, value);
         }
 
-        protected override void Init() {
+        protected void Start() {            
             if (feeds == null || feeds.Length == 0) feeds = new[] { "Value" };
             CreateFeedStructures();
             GenerateAudioSources(masterVolume > float.Epsilon);

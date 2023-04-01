@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
 namespace K3.Effects {
-    class AudioView : Script {
+    class AudioView : MonoBehaviour {
         #pragma warning disable 649
         [SerializeField] SoundBank bank;
         #pragma warning restore 649
 
-        protected override void Init() {
+        protected void Start() {
             var audioSource = GetComponent<AudioSource>();
             if ( audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.loop = bank.Looping;

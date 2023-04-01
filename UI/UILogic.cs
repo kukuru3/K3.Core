@@ -2,7 +2,7 @@
 
 namespace K3.UI {
     [RequireComponent(typeof(IUIElement))]
-    public class UILogic: K3.Script {
+    public class UILogic: MonoBehaviour {
 
         #pragma warning disable 649
         [SerializeField] string messageID;

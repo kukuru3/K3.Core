@@ -1,26 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace K3 {
-
-    public interface IAutoTracked<T> {
-
-    }
-
-    public interface IUnityMessageSource {
-        event System.Action OnFixedUpdate;
-        event System.Action OnGUIDrawn;
-        event System.Action OnLateUpdate;
-        event System.Action OnUpdate;
-        event System.Action OnLogic;
-        event System.Action OnQuitting;
-    }
-
-    public interface IScriptSource {
-        event System.Action<Script> OnScriptInstantiated;
-        event System.Action<Script> OnScriptDestroyed;
-    }
-
-    public interface ISceneContainers {
+public interface ISceneContainers {
         IContainer<T> GetContainer<T>();
         void RegisterContainer<T>(IContainer<T> container);
         void RemoveContainer<T>(IContainer<T> container);
