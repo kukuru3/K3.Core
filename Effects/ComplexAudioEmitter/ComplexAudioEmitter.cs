@@ -61,7 +61,7 @@ namespace K3.Effects {
             set => SetFeed(0, value);
         }
 
-        protected void Start() {            
+        protected void Awake() {            
             if (feeds == null || feeds.Length == 0) feeds = new[] { "Value" };
             CreateFeedStructures();
             GenerateAudioSources(masterVolume > float.Epsilon);
