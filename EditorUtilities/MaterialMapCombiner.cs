@@ -163,20 +163,29 @@ namespace K3.Editor {
         }
 
         private static void GenerateUsageMap() {
-            usageMap = new Dictionary<string, TextureUsages>();
-            usageMap.Add("albedo", TextureUsages.Albedo);
-            usageMap.Add("diffuse", TextureUsages.Albedo);
-            usageMap.Add("basecolor", TextureUsages.Albedo);
-            usageMap.Add("normal", TextureUsages.Normal);
-            usageMap.Add("roughness", TextureUsages.Roughness);
-            usageMap.Add("smoothness", TextureUsages.Smoothness);
-            usageMap.Add("glossiness", TextureUsages.Smoothness);
-            usageMap.Add("metallic", TextureUsages.MetallicRaw);
-            usageMap.Add("emission", TextureUsages.Emission);
-            usageMap.Add("height", TextureUsages.Height);
-            usageMap.Add("occlusion", TextureUsages.Occlusion);
-            usageMap.Add("ambientocclusion", TextureUsages.Occlusion);
-            usageMap.Add("metallicsmoothness", TextureUsages.CombinedMetallicSmoothness);
+            usageMap = new Dictionary<string, TextureUsages> {
+                { "albedo", TextureUsages.Albedo },
+                { "diffuse", TextureUsages.Albedo },
+                { "basecolor", TextureUsages.Albedo },
+                { "normal", TextureUsages.Normal },
+                { "roughness", TextureUsages.Roughness },
+                { "smoothness", TextureUsages.Smoothness },
+                { "glossiness", TextureUsages.Smoothness },
+                { "metallic", TextureUsages.MetallicRaw },
+                { "emission", TextureUsages.Emission },
+                { "emissive", TextureUsages.Emission },
+                { "height", TextureUsages.Height },
+                { "occlusion", TextureUsages.Occlusion },
+                { "ambientocclusion", TextureUsages.Occlusion },
+                { "metallicsmoothness", TextureUsages.CombinedMetallicSmoothness }
+            };
+
+            foreach (var key in usageMap.Keys.ToArray()) {
+                if (char.IsLower(key[0])) {
+                    var newKey = char.ToUpperInvariant(key[0]).ToString() + key.Substring(1);
+                    usageMap[newKey] = usageMap[key];
+                }
+            }
         }
 
         private static void TryGenerateMaterial(ObjectAnalysis anal) {
