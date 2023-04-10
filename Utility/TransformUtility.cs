@@ -60,6 +60,13 @@ namespace K3 {
             
         }
 
+        public static Quaternion MoveTowards(Quaternion a, Quaternion b, float deltaAngle) {
+            var angle = Quaternion.Angle(a,b);
+            if (angle < 0.001f) return b;
+            var t = deltaAngle / angle;
+            return Quaternion.Slerp(a, b, t);
+        }
+
         public static Quaternion SmoothDamp(Quaternion rot, Quaternion target, ref Quaternion deriv, float time) {
             if (Time.deltaTime < Mathf.Epsilon) return rot;
             // account for double-cover
