@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 using UnityEngine;
 
 namespace K3.Utility {
@@ -12,9 +11,10 @@ namespace K3.Utility {
     /// Complex Controlled value has layers of influence, and blend weights.
     /// All "blend" items in a single layer will blend together according to their weights.
     /// weights within a single layer are normalized, however, the maximum of those weights is used to blend the layer onto previous layers.
+    /// 
+    /// Note: in embers, this has been superseded by a TweakableValue which is generic and has more options. It is left here for legacy purposes.
     /// </summary>
     public class BlendedFloat {
-
         struct Record {
             internal readonly int tokenIndex;
             internal readonly int layer;
@@ -39,7 +39,7 @@ namespace K3.Utility {
         Dictionary<int, int> tokenMapping = new();
         List<Record> records = new();
 
-        public AccessToken ObtainAccessToken(int layerIndex) {
+        public AccessToken GetAccessToken(int layerIndex) {
             var token = TokenRepository.GetNewToken(this);
             var r = new Record(token._tokenIndex, layerIndex);
             tokenMapping.Add(token._tokenIndex, records.Count);
