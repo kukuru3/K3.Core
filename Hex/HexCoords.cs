@@ -1,31 +1,33 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace K3.Hex {
-    public struct HexCoords {
+    public struct Hex {
+
         public readonly int q;
         public readonly int r;
         public readonly int S => -q - r;
 
-        public HexCoords(int q, int r) {
+        public Hex(int q, int r) {
             this.q = q;
             this.r = r;
         }
 
-        public static HexCoords operator +(HexCoords a, HexCoords b) => new HexCoords(a.q + b.q, a.r + b.r);
-        public static HexCoords operator -(HexCoords a, HexCoords b) => new HexCoords(a.q - b.q, a.r - b.r);
+        public static Hex operator +(Hex a, Hex b) => new Hex(a.q + b.q, a.r + b.r);
+        public static Hex operator -(Hex a, Hex b) => new Hex(a.q - b.q, a.r - b.r);
 
         public void Deconstruct(out int Q, out int R) { Q = q; R = r; }
         public void Deconstruct(out int Q, out int R, out int S) { Q = q; R = r; S = this.S; }
 
-        public static implicit operator HexCoords((int q, int r) t) => new HexCoords(t.q, t.r);
+        public static implicit operator Hex((int q, int r) t) => new Hex(t.q, t.r);
 
-        public static int Distance(HexCoords a, HexCoords b) {
+        public static int Distance(Hex a, Hex b) {
             var delta = a - b;
             return Math.Abs(delta.q) + Math.Abs(delta.r) + Math.Abs(delta.S) / 2;
         }
 
-        public int DistanceTo(HexCoords b) => Distance(this, b);
+        public int DistanceTo(Hex b) => Distance(this, b);
     }
 
     public enum OffsetSystems {
@@ -55,12 +57,12 @@ namespace K3.Hex {
             _ => throw new System.InvalidOperationException("Invalid offset system")
         };
 
-        public static HexCoords Neighbour(this HexCoords c, HexCoords offset) {
+        public static Hex Neighbour(this Hex c, Hex offset) {
             return c + offset;
         }
-        public static void RotateClockwise(this HexCoords c, int howManyHexRotations = 1) { throw new System.NotImplementedException(); }   
+        public static void RotateClockwise(this Hex c, int howManyHexRotations = 1) { throw new System.NotImplementedException(); }   
 
-        public static HexCoords Round(float q, float r) {
+        public static Hex Round(float q, float r) {
             var intQ = Mathf.RoundToInt(q);
             var intR = Mathf.RoundToInt(r);
             var s = -q-r;
@@ -77,10 +79,10 @@ namespace K3.Hex {
             } else {
                 intS = -intQ - intR;
             }
-            return new HexCoords(intQ, intR);
+            return new Hex(intQ, intR);
         }
 
-        public static HexCoords PixelToHex(float x, float y, GridTypes g, float d) {
+        public static Hex PixelToHex(float x, float y, GridTypes g, float d) {
             return g switch {
                 GridTypes.FlatTop => Round( 
                     2f / 3f * x / d,
@@ -94,7 +96,8 @@ namespace K3.Hex {
             };
         }
 
-        public static (float x, float y) HexToPixel(this HexCoords hex, GridTypes g, float d) {
+        /// <param name="d">the "size" of the hex's side. The hex is 2d wide at its longest.</param>
+        public static (float x, float y) HexToPixel(this Hex hex, GridTypes g, float d) {
             return g switch { 
                 GridTypes.PointyTop => ( d * (SQRT_3 * hex.q + SQRT_3 / 2 * hex.r) , d * (3f / 2 * hex.r) ),
                 GridTypes.FlatTop   => ( d * (3f / 2 * hex.q) , d * (SQRT_3 / 2 * hex.q + SQRT_3 * hex.r) ),
@@ -102,7 +105,9 @@ namespace K3.Hex {
             };
         }
 
-        public static (int x, int y) ToOffsetCoordinates(HexCoords hex, OffsetSystems o) {
+        public static readonly Hex[] Neighbours = new[] { OffsetsP.East, OffsetsP.SouthEast, OffsetsP.SouthWest, OffsetsP.West, OffsetsP.NorthWest, OffsetsP.NorthEast };
+
+        public static (int x, int y) ToOffsetCoordinates(Hex hex, OffsetSystems o) {
             return o switch {
                 OffsetSystems.OddR => ToOddR(hex),
                 OffsetSystems.EvenR => ToEvenR(hex),
@@ -112,7 +117,7 @@ namespace K3.Hex {
             };
         }
 
-        public static HexCoords ToHexCoordinates(int row, int column, OffsetSystems o) {
+        public static Hex ToHexCoordinates(int row, int column, OffsetSystems o) {
             return o switch { 
                 OffsetSystems.OddR => FromOddR(row, column),
                 OffsetSystems.EvenR => FromEvenR(row, column),
@@ -122,63 +127,71 @@ namespace K3.Hex {
             };
         }
 
-        private static (int x, int y) ToOddR(HexCoords hex) {
+        public static IEnumerable<Hex> InRadius(Hex center, int N) {
+            for (var q = -N; q <= N; q++) {
+                for (var r = Math.Max(-N, -q - N); r <= Math.Min(N, -q + N); r++) {
+                    yield return center + (q, r);
+                }
+            }
+        }
+
+        private static (int x, int y) ToOddR(Hex hex) {
             var x = hex.q + (hex.r - (hex.r & 1)) / 2;
             var y = hex.r;
             return (x, y);
         }
         
-        private static (int x, int y) ToEvenR(HexCoords hex) {
+        private static (int x, int y) ToEvenR(Hex hex) {
             var x = hex.q + (hex.r + (hex.r & 1)) / 2;
             var y = hex.r;
             return (x, y);
         }
 
-        private static HexCoords FromOddR(int row, int col) {
+        private static Hex FromOddR(int row, int col) {
             var q = col + (row - (row & 1)) / 2;
             var r = row;
-            return new HexCoords(q, r);
+            return new Hex(q, r);
         }
 
-        private static HexCoords FromEvenR(int row, int col) {
+        private static Hex FromEvenR(int row, int col) {
             var q = col + (row + (row & 1)) / 2;
             var r = row;
-            return new HexCoords(q, r);
+            return new Hex(q, r);
         }
 
-        private static (int x, int y) ToOddQ(HexCoords hex) {
+        private static (int x, int y) ToOddQ(Hex hex) {
             var x = hex.q;
             var y = hex.r + (hex.q - (hex.q & 1)) / 2;
             return (x, y);
         }
 
-        private static (int x, int y) ToEvenQ(HexCoords hex) {
+        private static (int x, int y) ToEvenQ(Hex hex) {
             var x = hex.q;
             var y = hex.r + (hex.q + (hex.q & 1)) / 2;
             return (x, y);
         }
-        private static HexCoords FromOddQ(int row, int col) {
+        private static Hex FromOddQ(int row, int col) {
             var q = col;
             var r = row - (col - (col & 1)) / 2;
-            return new HexCoords(q, r);
+            return new Hex(q, r);
         }
     }
 
     public struct OffsetsP {
-        public static HexCoords East => (1,0);
-        public static HexCoords West => (-1,0);
-        public static HexCoords NorthEast => (+1,-1);
-        public static HexCoords NorthWest => (0,-1);
-        public static HexCoords SouthEast => (0,+1);
-        public static HexCoords SouthWest => (-1,+1);
+        public static Hex East => (1,0);
+        public static Hex West => (-1,0);
+        public static Hex NorthEast => (+1,-1);
+        public static Hex NorthWest => (0,-1);
+        public static Hex SouthEast => (0,+1);
+        public static Hex SouthWest => (-1,+1);
     }
 
     public struct OffsetsF {
-        public static HexCoords SouthEast => (1,0);
-        public static HexCoords NorthEast => (1,-1);
-        public static HexCoords South => (0,1);
-        public static HexCoords North => (0,-1);
-        public static HexCoords SouthWest => (-1,1);
-        public static HexCoords NorthWest => (-1,0);
+        public static Hex SouthEast => (1,0);
+        public static Hex NorthEast => (1,-1);
+        public static Hex South => (0,1);
+        public static Hex North => (0,-1);
+        public static Hex SouthWest => (-1,1);
+        public static Hex NorthWest => (-1,0);
     }
 }
