@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace K3 {
     static public partial class Paths {
@@ -53,22 +49,28 @@ namespace K3 {
     static public partial class Paths {
         static public class Editor {
             static Editor() {
-                _projectRoot = new DirectoryInfo(Application.dataPath).Parent.FullName;
+                _unityProjectRoot = new DirectoryInfo(Application.dataPath).Parent.FullName;
+                _masterRoot = new DirectoryInfo(Application.dataPath).Parent.Parent.FullName;
             }
-            static string _projectRoot;
+            static string _unityProjectRoot;
+            static string _masterRoot;
             /// <summary>"Project root"is the folder that CONTAINS THE ASSETS folder</summary>
-            static public string GetProjectRoot() => _projectRoot;
+            static public string GetProjectRoot() => _unityProjectRoot;
 
-            static public string GetProjectPath(params string[] relativePath) {
+            static public string GetMasterPathOfEnitreProject() => _masterRoot;
+            
+            static public string GetPathInUnityProject(params string[] relativePath) {
                 var l = new List<string>();
                 l.Add(GetProjectRoot());
                 l.AddRange(relativePath);
                 return Path.Combine(l.ToArray());
             }
 
+            static public string MetricsFolder => Path.Combine(GetMasterPathOfEnitreProject(), "Metrics");
+
             [UnityEditor.MenuItem("K3 Tools/Dump folders")]
             static void DumpFolders() {
-                Debug.Log($"editor project root : {GetProjectPath("Data")}");
+                Debug.Log($"editor project root : {GetPathInUnityProject("Data")}");
                 Debug.Log($"editor logfile: {GetLogFilePath()}");
             }
             

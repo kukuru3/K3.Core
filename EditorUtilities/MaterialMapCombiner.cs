@@ -189,7 +189,9 @@ namespace K3.Editor {
         }
 
         private static void TryGenerateMaterial(ObjectAnalysis anal) {
-            var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            var shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null) shader = Shader.Find("Standard");
+            var mat = new Material(shader);
         
             foreach (var item in anal.items) {
                 if (item.usage != TextureUsages.Unknown) {
@@ -206,7 +208,7 @@ namespace K3.Editor {
         }
 
         static (string relativeFilePath, string relativeFileDirectoryPath, string absoluteFileDirectoryPath) GetPaths(string assetPath) {
-            var projectRoot = Paths.Editor.GetProjectPath();
+            var projectRoot = Paths.Editor.GetPathInUnityProject();
             var path = new System.IO.FileInfo(assetPath);
             var directory = path.Directory;
 
@@ -223,8 +225,11 @@ namespace K3.Editor {
         }
 
         static void AssignTexture(TextureUsages usage, Material mat, Texture2D texture) {
+
+
+            var isUrp = UnityEngine.Rendering.GraphicsSettings.renderPipelineAsset;
             var str = usage switch {
-                TextureUsages.Albedo => "_BaseMap",            
+                TextureUsages.Albedo => isUrp ? "_BaseMap" : "_MainTex",            
                 TextureUsages.Normal => "_BumpMap",
                 TextureUsages.Emission => "_EmissionMap",
                 TextureUsages.Height => "_ParallaxMap",
