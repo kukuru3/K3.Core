@@ -28,6 +28,8 @@ namespace K3.Hex {
         }
 
         public int DistanceTo(Hex b) => Distance(this, b);
+        public override bool Equals(object other) => other is Hex hex && q == hex.q && r == hex.r;
+        public override int GetHashCode() => HashCode.Combine(q, r);
     }
 
     public enum OffsetSystems {
@@ -60,7 +62,18 @@ namespace K3.Hex {
         public static Hex Neighbour(this Hex c, Hex offset) {
             return c + offset;
         }
-        public static void RotateClockwise(this Hex c, int howManyHexRotations = 1) { throw new System.NotImplementedException(); }   
+        public static void Rotate(this Hex c, int hexRotations = 1) { 
+            hexRotations %= 6;
+            if (hexRotations > 3) hexRotations -= 6;
+            if (hexRotations <-3) hexRotations += 6;
+            if (hexRotations > 0)
+                for (var i = 0; i < hexRotations; i++) c = RotateOnceClockwise(c);
+            else 
+                for (var i = 0; i < hexRotations; i++) c = RotateOnceCounterclockwise(c);
+        }
+
+        private static Hex RotateOnceClockwise(Hex c) => (-c.r, -c.S);
+        private static Hex RotateOnceCounterclockwise(Hex c) => (-c.S, -c.q);
 
         public static Hex Round(float q, float r) {
             var intQ = Mathf.RoundToInt(q);
