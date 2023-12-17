@@ -41,6 +41,9 @@ namespace K3 {
             }
         }
 
+        public static float Range(float low, float high) => low + (high - low) * UnityEngine.Random.value;
+        public static int Range(int low, int high) => low + Mathf.RoundToInt((high - low) * UnityEngine.Random.value);
+
         static public T PickRandom<T>(this IList<T> fromCollection) {
             if (fromCollection.Count == 0) return default;
             return fromCollection[UnityEngine.Random.Range(0, fromCollection.Count)];

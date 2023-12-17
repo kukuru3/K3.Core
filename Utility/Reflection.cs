@@ -65,6 +65,12 @@ namespace K3 {
             }
         }
 
+        public static List<T> AutoinstantiateTypesMarkedWithAttribute<T, TAttrib>() where TAttrib : System.Attribute =>
+            GetTypeAttributesInProject<TAttrib>()
+                .Select(t => t.type)
+                .Select(t => (T)Activator.CreateInstance(t))
+                .ToList();
+
         public static IEnumerable<(T attr, MethodInfo info)> ListMethodAttributes<T>(Type sourceType) where T : Attribute {
             var allMethods = sourceType.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             foreach (var m in allMethods) {

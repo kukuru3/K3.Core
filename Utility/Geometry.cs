@@ -26,6 +26,15 @@ namespace K3 {
             return (g.x * h.y - g.y * h.x);
         }
 
+        static public float DistancePointFromSegment(Vector3 p, Vector3 a, Vector3 b) {
+            var t = ProjectPointOnSegment(p, a, b);
+            if (t > 1f) return Vector3.Distance(p, b);
+            if (t < 0f) return Vector3.Distance(p, a);
+
+            var pt = Vector3.LerpUnclamped(a, b, t);
+            return Vector3.Distance(pt, p);
+        }
+
         static public float ProjectPointOnSegment(Vector3 p, Vector3 a, Vector3 b) {
             var axis = (b - a).normalized;
             p = Vector3.Project(p, axis);
@@ -109,6 +118,25 @@ namespace K3 {
             } else {
                 return (targetPosition - interceptorPosition).normalized;
             }
+        }
+
+        public static bool PointInsidePolygon(Vector2 point, IList<Vector2> polypoints) {
+            var previousSide = 999; // gibberish value
+
+            for (var i = 0; i < polypoints.Count; i++) {
+                var j = i + 1;
+                if (j >= polypoints.Count) j = 0;
+
+                // edge is polypoints[i] -> polypoints[j]
+                var pa = point - polypoints[i];
+                var ba = polypoints[j] - polypoints[i];
+
+                var cross = pa.x * ba.y - pa.y * ba.x;
+                var currentSide = (int)Mathf.Sign(cross);
+                if (i > 0 && currentSide != previousSide) return false;
+                previousSide = currentSide;
+            }
+            return true;
         }
 
         public static Vector3? GetBestFittingPlaneNormal(IEnumerable<Vector3> points) {

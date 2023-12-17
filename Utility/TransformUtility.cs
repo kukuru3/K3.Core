@@ -2,7 +2,52 @@ using UnityEngine;
 
 namespace K3 {
 
+    public static class PoseUtility {
+        /// <returns>pose necessary to go from "from" to "to"</returns>
+        public static Pose GetRelativePose(this Pose from, Pose to) {
+            Quaternion inverseLhsRotation = Quaternion.Inverse(from.rotation);
+            Pose relativePose = new Pose {
+                position = inverseLhsRotation * (to.position - from.position),
+                rotation = inverseLhsRotation * to.rotation
+            };
+            return relativePose;
+        }
+
+        public static Pose Inverse(this Pose p) {
+            var invRot = Quaternion.Inverse(p.rotation);
+            return new Pose(invRot * -p.position, invRot);
+        }
+
+        public static Pose Mul(this Pose parent, Pose child) {
+            return child.GetTransformedBy(parent);
+        }
+
+        public static Pose WorldPose(this Transform transform) {
+            return new Pose(transform.position, transform.rotation);
+        }
+
+        public static void AssumePose(this Transform transform, Pose pose) {
+            transform.SetPositionAndRotation(pose.position, pose.rotation);
+        }
+
+        public static void AssumeLocalPose(this Transform transform, Pose pose) {
+            transform.SetLocalPositionAndRotation(pose.position, pose.rotation);
+        }
+
+        public static bool Identical(Pose a, Pose b, float distanceEpsilon = 0.01f, float angleEpsilon = 1f) {
+            var diff = GetRelativePose(a, b);
+            return (diff.position.magnitude < distanceEpsilon) && (Quaternion.Angle(Quaternion.identity, diff.rotation) < angleEpsilon);
+        }
+
+        public static Vector3 TransformPoint(this Pose worldspacePose, Vector3 localPoint) {
+            return worldspacePose.position + worldspacePose.rotation * localPoint;
+        }
+    }
+
     public static class TransformUtility {
+        //public static Pose WorldPose(this Transform t) {
+        //    return new Pose(t.position, t.rotation);
+        //}
         /// <param name="P">parent</param>
         /// <param name="C">child</param>
         /// <param name="R">reference</param>

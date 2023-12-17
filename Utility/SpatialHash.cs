@@ -26,15 +26,25 @@ namespace K3.Utility {
             public HashSet<T> items;
         }
 
+        public void Clear() {
+            sparseGrid.Clear();
+            objToKeyLookup.Clear();
+        }
         Dictionary<T, int2> objToKeyLookup = new Dictionary<T, int2>();
         Dictionary<int2, Cell> sparseGrid = new Dictionary<int2, Cell>();
         float _cellResolution = 10f;
 
-        public SimpleSpatialHash() {
-            if (typeof(IHas3dPosition).IsAssignableFrom(typeof(T))) positionEvaluator = GetPositionFromInterface;
-            else if (typeof(IHasMapPosition).IsAssignableFrom(typeof(T))) positionEvaluator = GetPositionFromInterface2D;
-            else if (typeof(Component).IsAssignableFrom(typeof(T))) positionEvaluator = GetPositionFromComponent;
-            else throw new Exception($"Cannot use spatial hashing on {typeof(T)} since there is no way to extract position from it.");
+        public SimpleSpatialHash(float cellResolution = 10f, PositionDelegate positionEvaluator = null) {
+            this._cellResolution = cellResolution;
+            if (positionEvaluator != null) { 
+                this.positionEvaluator = positionEvaluator;
+            } else { 
+                if (typeof(IHas3dPosition).IsAssignableFrom(typeof(T))) this.positionEvaluator = GetPositionFromInterface;
+                else if (typeof(IHasMapPosition).IsAssignableFrom(typeof(T))) this.positionEvaluator = GetPositionFromInterface2D;
+                else if (typeof(Vector2).Equals(typeof(T))) this.positionEvaluator = GetDirectPosition;
+                else if (typeof(Component).IsAssignableFrom(typeof(T))) this.positionEvaluator = GetPositionFromComponent;
+                else throw new Exception($"Cannot use spatial hashing on {typeof(T)} since there is no way to extract position from it.");
+            }
         }
 
         public IEnumerable<T> AllItems() => objToKeyLookup.Keys;
@@ -42,10 +52,11 @@ namespace K3.Utility {
         Vector2 GetPositionFromComponent(T obj) => (obj as Component).transform.position.Flatten();
         Vector2 GetPositionFromInterface(T hasPos) => (hasPos as IHas3dPosition).Position.Flatten();
         Vector2 GetPositionFromInterface2D(T hasPos) => (hasPos as IHasMapPosition).MapPosition;
+        Vector2 GetDirectPosition(T obj) => (Vector2)(object)obj;
 
-        delegate Vector2 GetPositionDelegate(T sourceObject);
+        public delegate Vector2 PositionDelegate(T sourceObject);
 
-        GetPositionDelegate positionEvaluator;
+        PositionDelegate positionEvaluator;
 
         // you could concievably also have it automatically scale resolution based on the maximum and minimum of the items, and the number of items.
         public void ChangeCellResolution(float newResolution) {
@@ -96,6 +107,38 @@ namespace K3.Utility {
             if (!objToKeyLookup.TryGetValue(@object, out var key)) return;
             GetCell(key).items.Remove(@object);
             objToKeyLookup.Remove(@object); 
+        }
+
+        public bool AnyInRadius(Vector2 worldCenter, float radius) {
+            var minX = Mathf.FloorToInt((worldCenter.x - radius) / _cellResolution);
+            var maxX = Mathf.FloorToInt((worldCenter.x + radius) / _cellResolution);
+            var minY = Mathf.FloorToInt((worldCenter.y - radius) / _cellResolution);
+            var maxY = Mathf.FloorToInt((worldCenter.y + radius) / _cellResolution);
+            for (var x = minX; x <= maxX; x++)
+            for (var y = minY; y <= maxY; y++) {
+                if (sparseGrid.TryGetValue(new int2(x,y), out var cell)) {
+                    foreach (var item in cell.items) {
+                        if (Vector2.SqrMagnitude(positionEvaluator(item) - worldCenter) <= radius * radius) return true;
+                    }
+                }
+            }
+            return false;        
+        }
+
+        public T FirstInRadius(Vector2 worldCenter, float radius) {
+            var minX = Mathf.FloorToInt((worldCenter.x - radius) / _cellResolution);
+            var maxX = Mathf.FloorToInt((worldCenter.x + radius) / _cellResolution);
+            var minY = Mathf.FloorToInt((worldCenter.y - radius) / _cellResolution);
+            var maxY = Mathf.FloorToInt((worldCenter.y + radius) / _cellResolution);
+            for (var x = minX; x <= maxX; x++)
+            for (var y = minY; y <= maxY; y++) {
+                if (sparseGrid.TryGetValue(new int2(x,y), out var cell)) {
+                    foreach (var item in cell.items) {
+                        if (Vector2.SqrMagnitude(positionEvaluator(item) - worldCenter) <= radius * radius) return item;
+                    }
+                }
+            }
+            return default;
         }
 
         public IEnumerable<T> GetObjectsInRadius(Vector2 worldCenter, float radius) {

@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 namespace K3 {
-
     public delegate T InterpolationProcess<T>(T a, T b, float tFactor);
 
     public class BlendTree<T> where T: struct {
