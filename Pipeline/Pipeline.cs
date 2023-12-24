@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
-using UnityEngine.LowLevel;
+
+namespace K3 {
+    public enum Triggers {
+        AppStart,
+        Update,
+        FixedUpdate,
+        LateUpdate,
+        PostRender,
+        Teardown,
+    }
+}
 
 namespace K3.Pipeline { 
 
     public interface IPipeline {
 
-        public enum Triggers {
-            AppStart,
-            Update,
-            FixedUpdate,
-            LateUpdate,
-            PostRender,
-            Teardown,
-        }
+        
 
         void RegisterMethod(Triggers trigger, Action method, int priority = 0);
     }
@@ -28,7 +31,7 @@ namespace K3.Pipeline {
     class CustomPipeline {
 
         class PipelineInstance : IPipeline {
-            public void RegisterMethod(IPipeline.Triggers trigger, Action method, int priority = 0) {
+            public void RegisterMethod(Triggers trigger, Action method, int priority = 0) {
                 var mh = new MethodHook { trigger = trigger, priority = priority, method = method };
                 CustomPipeline.GetHooks(trigger).Add(mh);
             }
@@ -60,21 +63,21 @@ namespace K3.Pipeline {
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void AppStart() {
-            Execute(IPipeline.Triggers.AppStart);
+            Execute(Triggers.AppStart);
         }
 
         private static void InitializeHookSystem() {
-            hooksPerTrigger = K3.Enums.MapToArrayAndPopulate<List<MethodHook>, IPipeline.Triggers>();
+            hooksPerTrigger = K3.Enums.MapToArrayAndPopulate<List<MethodHook>, Triggers>();
         }
 
-        static List<MethodHook> GetHooks(IPipeline.Triggers forTrigger) => hooksPerTrigger[(int)forTrigger];
+        static List<MethodHook> GetHooks(Triggers forTrigger) => hooksPerTrigger[(int)forTrigger];
 
-        internal static void Execute(IPipeline.Triggers trigger) {
+        internal static void Execute(Triggers trigger) {
             foreach (var item in GetHooks(trigger)) item.method?.Invoke();
         }
 
         static void TeardownApplication() {
-            Execute(IPipeline.Triggers.Teardown);
+            Execute(Triggers.Teardown);
             CleanupStatics();
         }
 
@@ -96,7 +99,7 @@ namespace K3.Pipeline {
         }
 
         struct MethodHook {
-            internal IPipeline.Triggers trigger;
+            internal Triggers trigger;
             internal int priority;
             internal Action method;
         }

@@ -66,6 +66,18 @@ namespace K3 {
             return null;
         }
 
+        static public string FullNamePath(this GameObject go) {
+            var sb  = new StringBuilder();
+            for (var t = go.transform; t != null; t = t.parent) sb.Insert(0, t.name + '/');
+            return sb.ToString();
+        }
+
+        static public string FullNamePath(this UnityEngine.Component c) {
+            var sb  = new StringBuilder();
+            for (var t = c.transform; t != null; t = t.parent) sb.Insert(0, t.name + '/');
+            return sb.ToString();
+        }
+
         static public GameObject FindTagInChildren(this GameObject go, string tag) => go.GetComponentsInChildren<Transform>(true).Select(t => t.gameObject).FirstOrDefault(o => o.tag == tag);
 
         static public T[] FindAllObjectsOfTypeIncludingInactive<T>() {

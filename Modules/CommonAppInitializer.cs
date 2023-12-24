@@ -8,17 +8,17 @@ namespace K3.Pipeline {
         public void Inject(IPipeline pipeline) {
             
             Pipeline = pipeline;
-            Pipeline.RegisterMethod(IPipeline.Triggers.AppStart, LaunchGame);
-            Pipeline.RegisterMethod(IPipeline.Triggers.Teardown, ClearContext);
+            Pipeline.RegisterMethod(Triggers.AppStart, LaunchGame);
+            Pipeline.RegisterMethod(Triggers.Teardown, ClearContext);
         }
 
         // you can (and should) register hooks of your own.
         private void RegisterLoopHoks(ModuleContainer container) {
             var callbackHooks = new ContainerCallbackHoooks(container);
 
-            Pipeline.RegisterMethod(IPipeline.Triggers.Update, callbackHooks.Frame);
-            Pipeline.RegisterMethod(IPipeline.Triggers.LateUpdate, callbackHooks.LateUpdate);
-            Pipeline.RegisterMethod(IPipeline.Triggers.FixedUpdate, callbackHooks.Tick);
+            Pipeline.RegisterMethod(Triggers.Update, callbackHooks.Frame);
+            Pipeline.RegisterMethod(Triggers.LateUpdate, callbackHooks.LateUpdate);
+            Pipeline.RegisterMethod(Triggers.FixedUpdate, callbackHooks.Tick);
         }
 
         void LaunchGame() {

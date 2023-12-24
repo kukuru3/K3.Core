@@ -15,19 +15,19 @@ namespace K3.Pipeline {
         internal static void AddLoopEvents() {
             
             Insert<UnityEngine.PlayerLoop.Update.ScriptRunBehaviourUpdate, ModulesUpdate>(
-                () => CustomPipeline.Execute(IPipeline.Triggers.Update)
+                () => CustomPipeline.Execute(Triggers.Update)
             );
 
             Insert<UnityEngine.PlayerLoop.PreLateUpdate.ScriptRunBehaviourLateUpdate, ModulesLateUpdate>(
-                () => CustomPipeline.Execute(IPipeline.Triggers.LateUpdate)
+                () => CustomPipeline.Execute(Triggers.LateUpdate)
             );
 
             Insert<UnityEngine.PlayerLoop.FixedUpdate.ClearLines, ModulesFixedUpdate>(
-                () => CustomPipeline.Execute(IPipeline.Triggers.FixedUpdate)
+                () => CustomPipeline.Execute(Triggers.FixedUpdate)
             );
 
             Insert<UnityEngine.PlayerLoop.PostLateUpdate.ProfilerEndFrame, PostCameraRender>(
-                () => CustomPipeline.Execute(IPipeline.Triggers.PostRender),
+                () => CustomPipeline.Execute(Triggers.PostRender),
                 true
             );
         }
