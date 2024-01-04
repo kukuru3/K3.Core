@@ -59,6 +59,15 @@ namespace K3 {
             return children.FirstOrDefault(c => c.name == name);
         }
 
+        public static int DestroyAllChildren(this Transform t) {
+            var counter = 0;
+            foreach (Transform child in t) {
+                counter++;
+                GameObject.Destroy(child.gameObject);
+            }
+            return counter;
+        }
+
         static public GameObject FindTagInUpwardHierarchy(this GameObject go, string tag, bool parentsOnly = false) {
             for (var t = parentsOnly ? go.transform.parent : go.transform; t != null; t = t.parent) {
                 if (t.tag == tag) return t.gameObject;

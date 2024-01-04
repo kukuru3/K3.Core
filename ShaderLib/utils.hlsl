@@ -4,11 +4,15 @@ float random2(float2 uv)
 }
 
 float remap(float value, float from, float to, float targetFrom, float targetTo) {
-    float t = (to - value) / (to - from);
+    float t = (value - from) / (to - from);
     return lerp(targetFrom, targetTo, t);
 }
 
 float remapClamped(float value, float from, float to, float targetFrom, float targetTo) {
-    float t = (to - value) / (to - from);
+    float t = (value - from) / (to - from);
     return lerp(targetFrom, targetTo, saturate(t));
+}
+
+float4 monochrome(float4 color) {
+    
 }
