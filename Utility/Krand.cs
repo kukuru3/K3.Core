@@ -51,8 +51,8 @@ namespace K3 {
         }
         
         public KRand(int seed = 0) { unchecked {  this.seed = (ulong)(seed); } }
-        public KRand(ulong seed = 0) => this.seed = seed;
-        public KRand(long seed = 0) { unchecked {  this.seed = (ulong)(seed); } }
+        public KRand(ulong seed) => this.seed = seed;
+        public KRand(long seed) { unchecked {  this.seed = (ulong)(seed); } }
 
         ulong _NextUlong() {
             return KrandUtils.Squirrel3(position++, seed);

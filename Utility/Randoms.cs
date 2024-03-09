@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Linq;
 using UnityEngine;
 
 namespace K3 {
@@ -75,7 +75,23 @@ namespace K3 {
             boxMullerSpare = x * fac;
             return y * fac;
         }
-    }
 
-    
+        public static T Pick<T>(IEnumerable<(T item, float weight)> items) {
+            // Calculate the total weight
+            float totalWeight = items.Sum(x => x.weight);
+
+                // Generate a random number between 0 and the total weight
+            float randomNumber = UnityEngine.Random.Range(0f, totalWeight);
+
+            // Iterate through the items
+            float runningTotal = 0;
+            foreach (var (item, weight) in items) {
+                runningTotal += weight;
+                if (randomNumber < runningTotal) return item;
+            }
+
+            // Fallback in case of rounding errors or empty collection
+            throw new System.InvalidOperationException("Cannot pick an item from an empty or invalid collection.");
+        }
+    }
 }
