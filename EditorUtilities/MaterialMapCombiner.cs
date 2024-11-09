@@ -227,7 +227,7 @@ namespace K3.Editor {
         static void AssignTexture(TextureUsages usage, Material mat, Texture2D texture) {
 
 
-            var isUrp = UnityEngine.Rendering.GraphicsSettings.renderPipelineAsset;
+            var isUrp = UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline;
             var str = usage switch {
                 TextureUsages.Albedo => isUrp ? "_BaseMap" : "_MainTex",            
                 TextureUsages.Normal => "_BumpMap",

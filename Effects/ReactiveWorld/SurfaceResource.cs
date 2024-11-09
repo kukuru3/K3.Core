@@ -8,16 +8,17 @@ namespace K3.ReactiveWorld {
     public class SurfaceResource : Resource {
         #pragma warning disable 649
         [SerializeField] string surfaceName;
-        [SerializeField] bool hasDust;
-        [SerializeField] bool isSolid;
         [SerializeField][Range(0f, 1f)] float hardness = 0.5f;
         [SerializeField][Range(0f, 1f)] float grip = 0.5f;
+
+        [SerializeField] string[] tags; 
+        
         #pragma warning restore 649
 
         public string Name => surfaceName;
-        public bool Dusty => hasDust;
-        public bool Solid => isSolid;
         public float Hardness => hardness;
         public float Grip => grip;
+
+        public string[] Tags => tags;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
@@ -66,6 +67,11 @@ namespace K3 {
             return IntersectSegmentAndPlane(A, B, plane);
         }
 
+        static public void LineLineIntersection(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2) {
+
+        }
+
+
         static public (Vector3 pointOnA, Vector3 pointOnB) ClosestPointsBetweenTwoLineSegments(Vector3 a, Vector3 b, Vector3 c, Vector3 d) {
             static Vector3 ConstrainToSegment(Vector3 position, Vector3 segA, Vector3 segB) {
                 var ba = segB - segA; var t = Vector3.Dot(position - segA, ba) / Vector3.Dot(ba, ba);
@@ -84,6 +90,19 @@ namespace K3 {
             var segABtoSegCD = ConstrainToSegment(segCDtoSegAB, a, b);
 
             return (segABtoSegCD, segCDtoSegAB);
+        }
+
+        public static Vector3 GetRandomizedForwardVector(float coneDegrees) {
+
+            var rad = Mathf.Deg2Rad * coneDegrees;
+            var cosThetaMin = Mathf.Cos(rad);
+            var u   = Randoms.Range(cosThetaMin, 1f);
+            var sin = Mathf.Sqrt(1f - u * u);
+            var phi = Randoms.Range(0f, Mathf.PI * 2f);
+            var x = sin * Mathf.Cos(phi);
+            var y = sin * Mathf.Sin(phi);
+            return new Vector3(x, y, u).normalized;
+        
         }
 
         public static Vector3? NormalizedInterceptVector(Vector3 interceptorPosition, Vector3 targetPosition, Vector3 targetVelocity, float interceptorVelocityMagnitude) {
@@ -174,8 +193,11 @@ namespace K3 {
             return null;
         }
 
+        /// <summary>Converts a Vector3 to a flat Vector2, removing the Y coordinate. Swizzle XYZ => XZ</summary>
         public static Vector2 Flatten(this Vector3 vector) => new Vector2(vector.x, vector.z);
+        /// <summary>Converts a Vector2 to a Vector3, with Y coordinate = 0. Swizzle XZ => X0Z</summary>
         public static Vector3 Deflatten(this Vector2 vector) => new Vector3(vector.x, 0, vector.y);
+        /// <summary>Returns a 3d vector, but with the Y component set to zero</summary>
         public static Vector3 Planarized(this Vector3 vector) => new Vector3(vector.x, 0, vector.z);
         public static (Vector3 unitVector, float magnitude) Decompose(this Vector3 vector) {
             var m = vector.magnitude;

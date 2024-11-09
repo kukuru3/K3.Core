@@ -39,6 +39,15 @@ namespace K3 {
 
         static public float Magnitude(this Quaternion q) => Quaternion.Dot(q, q);
 
+        public static Vector3 DeltaAngles(this Quaternion q) {
+            var e = q.eulerAngles;
+            return new Vector3(
+                Mathf.DeltaAngle(0, e.x),
+                Mathf.DeltaAngle(0, e.y),
+                Mathf.DeltaAngle(0, e.z)
+            );
+        }
+
 
         /// <summary>Calculates corrections needed to ideally stop at a desired target rotation, for a rotational system 
         /// that has angular acceleration and maximum angular speed limitations. </summary> 

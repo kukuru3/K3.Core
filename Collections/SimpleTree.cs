@@ -59,14 +59,21 @@ namespace K3.Collections {
 
         public T GetRoot() => rootNode.Item; 
 
-        public IEnumerable<T> GetChildren(T item) {
+        public IEnumerable<T> GetImmediateChildren(T item) {
             var n = FindNodeOf(item);
             if (n != null) return n.children.Select(c => c.Item);
             else {
                 UnityEngine.Debug.Log($"Item {item} has no associated node");
                 return new T[0];
             }
+        }
 
+        /// <returns>Children, grandchildren and other siblings</returns>
+        public IEnumerable<T> GetAllChildren(T item) {
+            var n = FindNodeOf(item);
+            if (n == null) yield break;
+            var st = GetSubtree(n);
+            foreach (var q in st) yield return q.Item;
         }
 
         /// <summary>Returns item, its parent, grandparent and so on all the way to the root.</summary>
@@ -128,6 +135,8 @@ namespace K3.Collections {
         }
 
         List<T> compiledList = null;
+
+        protected virtual void OnCacheInvalidated() { }
 
         void InvalidateCache() => compiledList = null;
 

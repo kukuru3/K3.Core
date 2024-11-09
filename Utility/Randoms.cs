@@ -29,7 +29,7 @@ namespace K3 {
 
     }
 
-    static public partial class Randoms {
+    static public partial class Randoms {   
 
         public static void ShuffleInPlace<T>(this T[] array) {
             int n = array.Length;
@@ -92,6 +92,22 @@ namespace K3 {
 
             // Fallback in case of rounding errors or empty collection
             throw new System.InvalidOperationException("Cannot pick an item from an empty or invalid collection.");
+        }
+
+        public static T Pick<T>(IEnumerable<T> items, System.Func<T, float> scoreFunction) {
+            return Pick(items.Select(item => (item, scoreFunction(item))));
+        }
+    }
+
+    public static class GeoRandom {
+        public static Vector2 UnitCircle() {
+            var angle = Randoms.Range(0f, Mathf.PI * 2f);
+            return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        }
+
+        public static Vector2 InCircle(float radius) {
+            var r = Randoms.Range(0f, 1f);
+            return UnitCircle() * radius * (1f - r * r);
         }
     }
 }

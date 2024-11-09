@@ -13,7 +13,7 @@ namespace K3.Pipeline {
         }
 
         internal static void AddLoopEvents() {
-            
+
             Insert<UnityEngine.PlayerLoop.Update.ScriptRunBehaviourUpdate, ModulesUpdate>(
                 () => CustomPipeline.Execute(Triggers.Update)
             );

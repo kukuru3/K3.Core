@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 
 namespace K3 {
@@ -73,6 +75,8 @@ namespace K3 {
                 Debug.Log($"editor project root : {GetPathInUnityProject("Data")}");
                 Debug.Log($"editor logfile: {GetLogFilePath()}");
             }
+
+            
             
             [UnityEditor.MenuItem("K3 Tools/Navigate to editor logfile")]
             static public void HiglightEditorLogFileInExplorer() {
@@ -81,7 +85,7 @@ namespace K3 {
             }
 
             [UnityEditor.MenuItem("K3 Tools/Navigate to build logfile")]
-            static public void HiglightBuildLogFileInExplorer() {                
+            static public void HiglightBuildLogFileInExplorer() {
                 var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 var finalPath = $"{userProfile}\\AppData\\LocalLow\\{Application.companyName}\\{Application.productName}\\Player.log";
                 System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{finalPath}\"");
@@ -93,7 +97,18 @@ namespace K3 {
                 p = p.Replace("/", "\\");
                 System.Diagnostics.Process.Start("explorer.exe", $"select,\"{p}\"");
             }
+
+            [UnityEditor.MenuItem("K3 Tools/List Assemblies...")]
+            static public void ListAssemblies() {
+                var asses = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetName().Name).OrderBy(a => a).ToList();
+                Debug.Log($"Assemblies: {string.Join("\r\n", asses)}");
+            }
         }
+    }
+
+    static public class Ext {
+
+
     }
     #endif
 }

@@ -54,6 +54,13 @@ namespace K3 {
             return false;
         }
 
+        public static bool IsAnyGenerationParent(Transform potentialChild, Transform potentialParent) {
+            for (var t = potentialChild.parent; t != null; t = t.parent) {
+                if (t == potentialParent) return true;
+            }
+            return false;
+        }
+
         public static Transform FindAnyChild(this Transform from, string name) {
             var children = from.gameObject.GetComponentsInChildren<Transform>(true);
             return children.FirstOrDefault(c => c.name == name);

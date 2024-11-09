@@ -9,10 +9,8 @@ namespace K3.IO {
     public static class DialogUtilities {
 
         public static string OpenFilePanel(string title, string initialFolder, params (string desc, string filter)[] filters) {
-            #if !UNITY_EDITOR
-            throw new System.NotImplementedException("Editor only!");
-            #endif
-
+            #if UNITY_EDITOR
+            
             var path = string.Empty;
 
             #if UNITY_STANDALONE_WIN
@@ -30,6 +28,10 @@ namespace K3.IO {
             }
             #else
             throw new System.NotImplementedException();
+            #endif
+
+            #else
+            throw new System.NotImplementedException("Editor only!");
             #endif
         }
     }

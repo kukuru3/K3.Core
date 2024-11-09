@@ -12,7 +12,9 @@ namespace K3 {
             };
             return relativePose;
         }
-
+        public static Pose GetDeltaAToB(Pose a, Pose b) {
+            return Mul(a.Inverse(), b);
+        }
         public static Pose Inverse(this Pose p) {
             var invRot = Quaternion.Inverse(p.rotation);
             return new Pose(invRot * -p.position, invRot);
@@ -138,6 +140,11 @@ namespace K3 {
 
             return new Quaternion(Result.x, Result.y, Result.z, Result.w);
         }
+
+        public static void SetLocalX(this Transform t, float x) { var p = t.localPosition; p.x = x; t.localPosition = p; }
+        public static void SetLocalY(this Transform t, float y) { var p = t.localPosition; p.y = y; t.localPosition = p; }
+        public static void SetLocalZ(this Transform t, float z) { var p = t.localPosition; p.z = z; t.localPosition = p; }
+
     }
 
 

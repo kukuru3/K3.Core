@@ -18,20 +18,22 @@ namespace K3.Graphs {
         protected virtual NodeConstructor NodeConstructor => (g) => new Node(g);
         protected virtual EdgeConstructor EdgeConstructor => (a,b) => new Edge(a, b);
 
-        internal Edge Connect(Node a, Node b) {
+        public Edge Connect(Node a, Node b) {
             if (a == null || b == null) throw new InvalidGraphException($"Can't connect null node; a={a}, b={b}");
             var e = EdgeConstructor(a, b);
             edges.Add(e);
+            a.edges.Add(e);
+            b.edges.Add(e);
             return e;
         }
 
-        internal Edge GetEdge(Node a, Node b) {
+        public Edge GetEdge(Node a, Node b) {
             if (a == null || b == null) return default;
             foreach (var edge in a.edges) if (edge.Connects(b)) return edge;
             return default;
         }
 
-        internal Node CreateNode() {
+        public Node CreateNode() {
             var n = NodeConstructor(this);
             nodes.Add(n);
             return n;
@@ -96,6 +98,12 @@ namespace K3.Graphs {
             this.b = b;
         }
 
+        public Node Other(Node n) {
+            if (n == a) return b;
+            else if (n == b) return a;
+            else throw new System.Exception("Other, but node does not connect this edge?");
+        }
+        
         public bool Connects(Node n) => a == n || b == n;
         protected internal virtual void OnRemoved() { }
     }

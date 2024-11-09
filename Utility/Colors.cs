@@ -9,5 +9,10 @@ namespace K3 {
         public static float GetRelativeLuminance(Color color, Color reference) {
             return Luma(color) / Luma(reference);
         }
+
+        public static Color WithAlpha(this Color color, float alpha) {
+            color.a = alpha;
+            return color;
+        }
     }
 }

@@ -40,8 +40,8 @@ namespace K3.Effects {
 
             internal AudioSource AudioSource { get; set; }
 
-            internal float CurrentPitch { get; set; }
-            internal float CurrentVolume { get; set; }
+            internal float CurrentPitch { get; set; } = 1f;
+            internal float CurrentVolume { get; set; } = 1f;
 
             internal void Reset() {
                 CurrentPitch = 1f;
@@ -49,7 +49,8 @@ namespace K3.Effects {
             }
             // Applies the channel values to audio source.
             internal void Apply(IChannelMaster master) {
-                AudioSource.pitch = CurrentPitch;
+                if (!float.IsNaN(CurrentPitch))
+                    AudioSource.pitch = CurrentPitch;
                 AudioSource.volume = CurrentVolume * master.MasterVolume;
             }
 

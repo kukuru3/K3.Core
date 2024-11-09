@@ -80,7 +80,7 @@ namespace K3 {
             else if (span < 0) {
                 return to + NextInt() % (1-span);
             }
-            return from;                     
+            return from;
         }
 
         public float Next(float from, float to) {
