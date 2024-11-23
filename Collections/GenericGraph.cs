@@ -69,6 +69,11 @@ namespace K3.Collections {
             foreach (var e in _perNodeEdges[node]) yield return e.e;
         }
 
+        public IEnumerable<N> AllNodes() => nodes;
+
+        public IEnumerable<E> AllEdges() => edges;
+        
+
         public bool Remove(N node) {
             if (!Contains(node))  return false;
             _fastEdgeSet.RemoveWhere(n => n.Has(node));
