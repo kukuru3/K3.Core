@@ -27,6 +27,8 @@ namespace K3 {
             return (g.x * h.y - g.y * h.x);
         }
 
+        /// <summary>Returns the distance between point P and segment AB. If the point projection falls outside the segment,
+        /// the distance is the distance to the closest endpoint.</summary>
         static public float DistancePointFromSegment(Vector3 p, Vector3 a, Vector3 b) {
             var t = ProjectPointOnSegment(p, a, b);
             if (t > 1f) return Vector3.Distance(p, b);
@@ -36,6 +38,21 @@ namespace K3 {
             return Vector3.Distance(pt, p);
         }
 
+        /// <summary>where Line is defined by points A and B</summary>
+        static public float DistancePointFromLine(Vector3 p, Vector3 a, Vector3 b) {
+            var t = ProjectPointOnSegment(p, a, b);
+            //if (t > 1f) return Vector3.Distance(p, b);
+            //if (t < 0f) return Vector3.Distance(p, a);
+
+            var pt = Vector3.LerpUnclamped(a, b, t); // pt is projection of p onto line AB
+            return Vector3.Distance(pt, p); // probably could be optimized 
+
+            // sdf (point P, endless cylinder AB,P) = DistancePointFromLine(P, A, B) - R
+        }
+
+        /// <summary>Returns the NORMALIZED t-value, where 0 means the projection lies on A, 
+        /// 1 means the projection lies on B, values in between are on the segment, 
+        /// and values outside are extrapolated.</summary>
         static public float ProjectPointOnSegment(Vector3 p, Vector3 a, Vector3 b) {
             var axis = (b - a).normalized;
             p = Vector3.Project(p, axis);
@@ -221,5 +238,15 @@ namespace K3 {
 
         public static Vector2 ToVec2(this (float x, float y) tuple) => new Vector2(tuple.x, tuple.y);
         public static Vector2 ToVec2(this (int x, int y) tuple) => new Vector2(tuple.x, tuple.y);
+
+        public static Vector2 Polar(float angle, float magnitude) {
+            var rad = angle * Mathf.Deg2Rad;
+            return new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * magnitude;
+        }
+
+        public static Vector3 Polar3D(Pose pose, float angle, float magnitude) {
+            var v = (Vector3)Polar(angle, magnitude);
+            return pose.TransformPoint(v);
+        }
     }
 }

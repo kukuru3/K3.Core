@@ -12,6 +12,7 @@ namespace K3 {
             };
             return relativePose;
         }
+        // wait, isn't this precisely the same as GetRelativePose()?
         public static Pose GetDeltaAToB(Pose a, Pose b) {
             return Mul(a.Inverse(), b);
         }
@@ -41,8 +42,13 @@ namespace K3 {
             return (diff.position.magnitude < distanceEpsilon) && (Quaternion.Angle(Quaternion.identity, diff.rotation) < angleEpsilon);
         }
 
-        public static Vector3 TransformPoint(this Pose worldspacePose, Vector3 localPoint) {
-            return worldspacePose.position + worldspacePose.rotation * localPoint;
+        public static Vector3 TransformPoint(this Pose worldspacePose, Vector3 localPoint) => worldspacePose.position + worldspacePose.rotation * localPoint;
+
+        public static Vector3 TransformDirection(this Pose worldspacePose, Vector3 direction) => worldspacePose.rotation * direction;
+        public static Vector3 InverseTransformDirection(this Pose worldspacePose, Vector3 direction) => Quaternion.Inverse(worldspacePose.rotation) * direction;
+
+        public static Ray TransformRay(this Pose deltaPose, Ray ray) {
+            return new(deltaPose.TransformPoint(ray.origin), deltaPose.TransformDirection(ray.direction));
         }
     }
 
@@ -89,6 +95,8 @@ namespace K3 {
 
             P.localScale = Vector3.one * scale;
         }
+
+
 
         public static Pose GetPoseSuchThatChildCoincidesWithReferenceValues(Transform P, Transform C, Quaternion referenceRotation, Vector3 referencePosition) {
             const float scale = 1f;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace K3.Collections {
+
+    
     public class SimpleTree<T> where T : class {
         private TreeNode rootNode;
 

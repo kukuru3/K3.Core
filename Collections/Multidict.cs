@@ -14,6 +14,11 @@ namespace K3.Collections {
             GetList(key, true).Add(value);
         }
 
+        public void AddMany(TKey key, IEnumerable<TValue> values) {
+            var list = GetList(key, true);
+            list.AddRange(values);
+        }
+
         public TValue First(TKey key) {
             var list = GetList(key);
             if (list == null) return default;
@@ -23,7 +28,7 @@ namespace K3.Collections {
 
         public IReadOnlyList<TValue> All(TKey key) => GetList(key, true);
 
-        public List<TValue> TryGetAll(TKey key) => GetList(key, false);
+        public IReadOnlyList<TValue> TryGetAll(TKey key) => GetList(key, false);
 
         public bool Has(TKey key) => lists.ContainsKey(key);
 
