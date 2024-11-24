@@ -12,7 +12,7 @@ namespace K3.Collections {
         public IEnumerable<(E edge, N node)> EnumerateNeighbours() {
             var thisNode = (N)this;
             foreach (var e in Graph.GetEdges(thisNode))
-                yield return (e, Graph.GetOther(e, thisNode));
+                yield return (e.edge, Graph.GetOther(e.edge, thisNode));
         }
     }
 
@@ -69,8 +69,8 @@ namespace K3.Collections {
             foreach (var e in _perNodeEdges[node]) yield return e.Other(node);
         }
 
-        public IEnumerable<E> GetEdges(N node) {
-            foreach (var e in _perNodeEdges[node]) yield return e.e;
+        public IEnumerable<(E edge, N other)> GetEdges(N node) {
+            foreach (var e in _perNodeEdges[node]) yield return (e.e, e.Other(node));
         }
 
         public IEnumerable<N> AllNodes() => nodes;
