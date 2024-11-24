@@ -56,8 +56,12 @@ namespace K3.Collections {
             nodes.Add(n);
             _perNodeEdges.Add(n, new HashSet<HashableEdge>());
             if (n is IGraphNode<N, E> gn) gn.Graph = this;
+            Changed?.Invoke();
             return n;
         }
+
+
+        public event Action Changed;
         
         bool Contains(N node) => _perNodeEdges.ContainsKey(node);
 
@@ -82,6 +86,7 @@ namespace K3.Collections {
 
             _perNodeEdges.Remove(node);
             nodes.Remove(node);
+            Changed?.Invoke();
             return true;
 
         }
@@ -95,6 +100,7 @@ namespace K3.Collections {
             _edgeLookup[e] = edgeContainer;
             edges.Add(e);
             if (e is IGraphEdge<N, E> ge) ge.Graph = this;
+            Changed?.Invoke();
             return e;
         }
 
@@ -103,6 +109,7 @@ namespace K3.Collections {
             _perNodeEdges[e.b].Remove(e);
             _edgeLookup.Remove(e.e);
             _fastEdgeSet.Remove(e);
+            Changed?.Invoke();
             edges.Remove(e.e);
         }
 
