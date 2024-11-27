@@ -73,7 +73,7 @@ namespace K3.Collections {
             foreach (var e in _perNodeEdges[node]) yield return (e.e, e.Other(node));
         }
 
-        public IEnumerable<N> AllNodes() => nodes;
+        public IReadOnlyCollection<N> AllNodes() => nodes;
 
         public IEnumerable<E> AllEdges() => edges;
         
