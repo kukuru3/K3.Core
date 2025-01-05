@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-namespace K3.Collections {
+namespace K3.Graphs {
 
-    public interface IGraphNode<N, E> {
+    public interface IGraphNode<N, E> { 
         public Graph<N, E> Graph { get; set; }
 
         public IEnumerable<N> Neighbours() {

@@ -37,5 +37,11 @@ namespace K3 {
             foreach (var item in source) if (result == null || (item < result && item > 0f)) result = item;
             return result;
         }
+
+        public static float DistributeAroundZero(int numberOfItems) {
+            if (numberOfItems < 2) return 0f;
+            var span = (float)numberOfItems - 1;
+            return -span / 2;
+        }
     }
 }

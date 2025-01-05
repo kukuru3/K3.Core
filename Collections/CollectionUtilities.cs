@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace K3.Collections {
     public static class CollectionUtilities {
@@ -12,6 +14,10 @@ namespace K3.Collections {
             added.UnionWith(newSet); added.ExceptWith(oldSet);
             removed.UnionWith(oldSet); removed.ExceptWith(newSet);
             return (added, removed);
+        }
+
+        public static string PrintList<T>(this IEnumerable<T> list, Func<T, string> descriptor = null) {
+            return "[" + string.Join(",", list.Select(item => descriptor?.Invoke(item) ?? item.ToString())) + "]";
         }
     }
 }

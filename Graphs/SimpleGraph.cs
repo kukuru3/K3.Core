@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace K3.Graphs {
 
     /// <summary>The graph is bidirectional</summary>
-    public class Graph {
+    public class SimpleGraph {
 
         protected List<Node> nodes = new List<Node>();
         protected List<Edge> edges = new List<Edge>();
@@ -71,17 +70,17 @@ namespace K3.Graphs {
         public InvalidGraphException(string msg) : base(msg) { }
     }
 
-    public delegate Node NodeConstructor(Graph g);
+    public delegate Node NodeConstructor(SimpleGraph g);
     public delegate Edge EdgeConstructor(Node a, Node b);
 
     public class Node {
-        public readonly Graph graph;
+        public readonly SimpleGraph graph;
 
         internal List<Edge> edges;
 
         public IEnumerable<Edge> Edges => edges;
 
-        public Node(Graph g) {
+        public Node(SimpleGraph g) {
             this.graph = g;
             edges = new List<Edge>();
         }

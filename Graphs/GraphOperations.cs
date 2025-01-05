@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
+#if false
 
-namespace K3.Collections {
+namespace K3.Graphs {
 
     public class GraphOperations<N, E> {
-        private readonly Graph<N, E> graph;
+        private readonly QGraph<N, E> graph;
 
-        public GraphOperations(Graph<N,E> graph) {
+        public GraphOperations(QGraph<N,E> graph) {
             this.graph = graph;
         }
 
@@ -150,3 +150,4 @@ namespace K3.Collections {
         }
     }
 }
+#endif

@@ -29,6 +29,10 @@ namespace K3 {
             return new Pose(transform.position, transform.rotation);
         }
 
+        public static Pose LocalPose(this Transform transform) {
+            return new Pose(transform.localPosition, transform.localRotation);
+        }
+
         public static void AssumePose(this Transform transform, Pose pose) {
             transform.SetPositionAndRotation(pose.position, pose.rotation);
         }
